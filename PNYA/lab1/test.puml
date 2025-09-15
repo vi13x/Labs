@@ -1,0 +1,15 @@
+@startuml
+
+class Array {
+  - int* data
+  - int size
+  + Array()
+  + Array(int n)
+  + Array(const Array& other)
+  + ~Array()
+  + input() : void
+  + output() const : void
+  + intersect(const Array& other) const : Array
+}
+
+@enduml

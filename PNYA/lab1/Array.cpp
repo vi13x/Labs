@@ -1,70 +1,52 @@
 #include "Array.h"
 
-
-Array::Array() {
-    size = 0;
-    data = nullptr;
-}
-
-
-Array::Array(int n) {
-    size = n;
-    data = new int[size];
-    for (int i = 0; i < size; i++) data[i] = 0;
-}
-
-
-Array::Array(const Array& other) {
-    size = other.size;
-    data = new int[size];
-    for (int i = 0; i < size; i++) data[i] = other.data[i];
-}
-
-
-Array::~Array() {
-    delete[] data;
-}
-
+Array::Array() : data() {}
+Array::Array(size_t n) : data(n) {}
+Array::Array(const Array& other) : data(other.data) {}
+Array::~Array() {}
 
 void Array::input() {
-    cout << "Введите размер массива: ";
-    cin >> size;
-    delete[] data;
-    data = new int[size];
-    cout << "Введите элементы массива:\n";
-    for (int i = 0; i < size; i++) cin >> data[i];
+    size_t n;
+    std::cin >> n;
+    this->data.resize(n);
+    for (size_t i = 0; i < n; ++i) {
+        std::cin >> this->data[i];
+    }
 }
 
-
-void Array::output() const {
-    cout << "Массив: ";
-    for (int i = 0; i < size; i++) cout << data[i] << " ";
-    cout << endl;
+void Array::print() const {
+    for (size_t i = 0; i < this->data.size(); ++i) {
+        std::cout << this->data[i];
+        if (i + 1 < this->data.size()) std::cout << ' ';
+    }
+    std::cout << '\n';
 }
-
 
 Array Array::intersect(const Array& other) const {
     Array result;
-    int maxSize = (size < other.size ? size : other.size);
-    result.size = 0;
-    result.data = new int[maxSize];
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < other.size; j++) {
-            if (data[i] == other.data[j]) {
-                bool exists = false;
-                for (int k = 0; k < result.size; k++) {
-                    if (result.data[k] == data[i]) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) {
-                    result.data[result.size] = data[i];
-                    result.size++;
+    for (size_t i = 0; i < this->data.size(); ++i) {
+        int val = this->data[i];
+        bool in_other = false;
+        for (size_t j = 0; j < other.data.size(); ++j) {
+            if (val == other.data[j]) {
+                in_other = true;
+                break;
+            }
+        }
+        if (in_other) {
+            bool already = false;
+            for (int x : result.data) {
+                if (x == val) {
+                    already = true;
+                    break;
                 }
             }
+            if (!already) result.data.push_back(val);
         }
     }
     return result;
+}
+
+Array Array::operator&(const Array& other) const {
+    return this->intersect(other);
 }

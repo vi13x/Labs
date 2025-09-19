@@ -1,50 +1,33 @@
 #include "Array.h"
+#include <vector>
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    Array a, b, c;
-    int choice;
+    size_t k;
+    std::cout << "How many arrays do you want to input? ";
+    std::cin >> k;
 
-    do {
-        cout << "\n===== МЕНЮ =====\n";
-        cout << "1. Ввод первого массива\n";
-        cout << "2. Ввод второго массива\n";
-        cout << "3. Вывод первого массива\n";
-        cout << "4. Вывод второго массива\n";
-        cout << "5. Пересечение массивов\n";
-        cout << "0. Выход\n";
-        cout << "Ваш выбор: ";
-        cin >> choice;
+    std::vector<Array> arrays(k);
 
-        switch (choice) {
-            case 1:
-                cout << "Первый массив:\n";
-                a.input();
-                break;
-            case 2:
-                cout << "Второй массив:\n";
-                b.input();
-                break;
-            case 3:
-                cout << "Первый ";
-                a.output();
-                break;
-            case 4:
-                cout << "Второй ";
-                b.output();
-                break;
-            case 5:
-                c = a.intersect(b);
-                cout << "Пересечение ";
-                c.output();
-                break;
-            case 0:
-                cout << "Выход...\n";
-                break;
-            default:
-                cout << "Неверный выбор!\n";
-        }
-    } while (choice != 0);
+    for (size_t i = 0; i < k; ++i) {
+        std::cout << "Enter size and elements of array " << i + 1 << ":\n";
+        arrays[i].input();
+    }
+
+    std::cout << "You entered:\n";
+    for (size_t i = 0; i < k; ++i) {
+        std::cout << "Array " << i + 1 << ": ";
+        arrays[i].print();
+    }
+
+    if (k == 0) return 0;
+
+    Array result = arrays[0];
+    for (size_t i = 1; i < k; ++i) {
+        result = result & arrays[i];
+    }
+
+    std::cout << "Intersection of all arrays:\n";
+    result.print();
 
     return 0;
 }

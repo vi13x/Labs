@@ -1,15 +1,36 @@
 @startuml
-
+' Класс Array
 class Array {
-  - int* data
-  - int size
+  - data: std::vector<int>
+  --
   + Array()
-  + Array(int n)
-  + Array(const Array& other)
+  + Array(n: size_t)
+  + Array(other: const Array&)
   + ~Array()
-  + input() : void
-  + output() const : void
-  + intersect(const Array& other) const : Array
+  --
+  + input(): void
+  + print(): void
+  + intersect(other: const Array&): Array
+  + operator&(other: const Array&): Array
 }
+
+' Вектор из STL (стандартная библиотека)
+class "std::vector<int>" as Vector {
+  + различные методы vector...
+}
+
+' Связь композиции (Array содержит Vector)
+Array *-- Vector : contains
+
+' Примечания
+note top of Array
+  Класс для работы с массивами
+  Реализует операцию пересечения
+end note
+
+note right of Vector
+  Стандартный контейнер STL
+  Используется для хранения данных
+end note
 
 @enduml

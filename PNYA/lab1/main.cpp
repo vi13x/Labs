@@ -1,33 +1,40 @@
 #include "Array.h"
-#include <vector>
+#include <iostream>
 
 int main() {
     size_t k;
-    std::cout << "How many arrays do you want to input? ";
+    std::cout << "Enter number of arrays: ";
     std::cin >> k;
 
-    std::vector<Array> arrays(k);
+    // Создаем массив объектов через конструктор с размером
+    Array* arrays = new Array[k]; // можно оставить пустыми, а потом инициализировать через input()
 
     for (size_t i = 0; i < k; ++i) {
-        std::cout << "Enter size and elements of array " << i + 1 << ":\n";
-        arrays[i].input();
+        std::cout << "Enter size and elements for Array " << i + 1 << ":\n";
+        arrays[i].input(); // инициализация каждого массива через метод input()
     }
 
-    std::cout << "You entered:\n";
+    std::cout << "\nYou entered:\n";
     for (size_t i = 0; i < k; ++i) {
         std::cout << "Array " << i + 1 << ": ";
         arrays[i].print();
     }
 
-    if (k == 0) return 0;
+    if (k > 0) {
+        Array result = arrays[0]; // вызов конструктора копирования
+        for (size_t i = 1; i < k; ++i) {
+            result = result.intersect (arrays[i]); // пересечение массивов через перегрузку &
+        }
 
-    Array result = arrays[0];
-    for (size_t i = 1; i < k; ++i) {
-        result = result & arrays[i];
+        std::cout << "\nIntersection of all arrays:\n";
+        result.print();
+
+
+        result.~Array();
     }
 
-    std::cout << "Intersection of all arrays:\n";
-    result.print();
+    // Освобождаем память под массив объектов
+    delete[] arrays;
 
     return 0;
 }

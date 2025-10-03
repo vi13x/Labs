@@ -1,7 +1,8 @@
 @startuml
 ' Класс Array
 class Array {
-  - data: std::vector<int>
+  - data: int*
+  - size: size_t
   --
   + Array()
   + Array(n: size_t)
@@ -14,23 +15,10 @@ class Array {
   + operator&(other: const Array&): Array
 }
 
-' Вектор из STL (стандартная библиотека)
-class "std::vector<int>" as Vector {
-  + различные методы vector...
-}
-
-' Связь композиции (Array содержит Vector)
-Array *-- Vector : contains
-
 ' Примечания
 note top of Array
-  Класс для работы с массивами
-  Реализует операцию пересечения
-end note
-
-note right of Vector
-  Стандартный контейнер STL
-  Используется для хранения данных
+  Класс для работы с динамическим массивом целых чисел
+  Реализует операцию пересечения массивов
 end note
 
 @enduml

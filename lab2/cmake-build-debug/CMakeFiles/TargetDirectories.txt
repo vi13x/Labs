@@ -1,3 +1,0 @@
-C:/Users/Vladislav Lakotko/CLionProjects/c++_2lab/cmake-build-debug/CMakeFiles/c___2lab.dir
-C:/Users/Vladislav Lakotko/CLionProjects/c++_2lab/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Vladislav Lakotko/CLionProjects/c++_2lab/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,24 @@
+@startuml
+' Класс Array
+class Array {
+  - data: int*
+  - size: size_t
+  --
+  + Array()
+  + Array(n: size_t)
+  + Array(other: const Array&)
+  + ~Array()
+  --
+  + input(): void
+  + print(): void
+  + intersect(other: const Array&): Array
+  + operator&(other: const Array&): Array
+}
+
+' Примечания
+note top of Array
+  Класс для работы с динамическим массивом целых чисел
+  Реализует операцию пересечения массивов
+end note
+
+@enduml

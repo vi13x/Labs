@@ -1,0 +1,3 @@
+C:/Users/Vladislav Lakotko/CLionProjects/LAB1_2sem/cmake-build-debug/CMakeFiles/LAB1_2sem.dir
+C:/Users/Vladislav Lakotko/CLionProjects/LAB1_2sem/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Vladislav Lakotko/CLionProjects/LAB1_2sem/cmake-build-debug/CMakeFiles/rebuild_cache.dir

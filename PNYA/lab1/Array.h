@@ -19,4 +19,8 @@ public:
 
     // Перегрузка оператора &
     Array operator&(const Array& other) const;
+
+    // Дружественные функции для перегрузки потоков
+    friend std::ostream& operator<<(std::ostream& os, const Array& arr);
+    friend std::istream& operator>>(std::istream& is, Array& arr);
 };

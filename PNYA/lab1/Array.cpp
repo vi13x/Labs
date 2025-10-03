@@ -70,3 +70,23 @@ Array Array::intersect(const Array& other) const {
 Array Array::operator&(const Array& other) const {
     return this->intersect(other);
 }
+
+// --- Перегрузка оператора вывода ---
+std::ostream& operator<<(std::ostream& os, const Array& arr) {
+    for(size_t i = 0; i < arr.size; ++i) {
+        os << arr.data[i];
+        if(i + 1 < arr.size) os << ' ';
+    }
+    return os;
+}
+
+// --- Перегрузка оператора ввода ---
+std::istream& operator>>(std::istream& is, Array& arr) {
+    is >> arr.size;
+    delete[] arr.data;
+    arr.data = new int[arr.size];
+    for(size_t i = 0; i < arr.size; ++i) {
+        is >> arr.data[i];
+    }
+    return is;
+}

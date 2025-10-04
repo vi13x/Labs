@@ -38,8 +38,8 @@ int main() {
     std::cout << str << std::endl;
 
     //Вычисление выражения с подстроками и отдельными символами
-    std::cout << "\nComputing expression: result = str(1,4) + str3[1] + str1[0]" << std::endl;
-    MyString result = str(1, 4) + str3[1] + str1[0];
+    std::cout << "\nComputing expression: result = str(1,4) + 'test' + 'Y'" << std::endl;
+    MyString result = str(1, 4) + "test" + 'Y';
     std::cout << "result = " << result << std::endl;
 
     //Инкремент и декремент строки
@@ -53,6 +53,6 @@ int main() {
     std::cout << "\nAssign str1 = str:" << std::endl;
     str1 = str;
     std::cout << str1 << std::endl;
-
+    str1.~MyString();
     return 0;
 }

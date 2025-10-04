@@ -110,6 +110,7 @@ MyString operator+(const char* lhs, const MyString& rhs) {
     return result;
 }
 
+
 MyString operator+(char lhs, const MyString& rhs) {
     char* buffer = new char[rhs.length + 2];
     buffer[0] = lhs;
@@ -118,6 +119,7 @@ MyString operator+(char lhs, const MyString& rhs) {
     delete[] buffer;
     return result;
 }
+
 
 // --- Оператор += ---
 MyString& MyString::operator+=(const MyString& other) {
@@ -155,7 +157,7 @@ std::ostream& operator<<(std::ostream& os, const MyString& str) {
 }
 
 std::istream& operator>>(std::istream& is, MyString& str) {
-    char buffer[1024];
+    char buffer[80];
     is >> buffer;
     str = MyString(buffer);
     return is;

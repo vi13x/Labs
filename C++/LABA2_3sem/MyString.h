@@ -8,7 +8,7 @@ private:
 public:
     // Конструкторы
     MyString();                     // по умолчанию
-    MyString(const char* str);      // из C-строки
+    MyString(const char* str);
     MyString(const MyString& other);// копирование
 
     // Деструктор

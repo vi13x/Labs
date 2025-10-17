@@ -1,0 +1,68 @@
+@startuml
+title LABA3_3sem — Transport Vehicles
+
+class TransportVehicle {
+  - std::string name
+  - double distanceKm
+  - double speedKmh
+  - double passengerRatePerKm
+  - double cargoRatePerKmPerKg
+
+  + TransportVehicle()
+  + TransportVehicle(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
+  + virtual ~TransportVehicle()
+
+  + virtual std::string type_name() const : std::string
+  + virtual double time_in_path_hours() const : double
+  + virtual double cost_passengers(int numPassengers) const : double
+  + virtual double cost_cargo(double weightKg) const : double
+
+  + void input_info()
+  + void input_info_passengers(int numPassengers) const
+  + void input_info_cargo(double weightKg) const
+  + virtual void printHeader()
+  + virtual void printTable()
+
+  + std::string get_name() const : std::string
+  + double get_distance_km() const : double
+  + double get_speed_kmh() const : double
+  + double get_passenger_rate_per_km() const : double
+  + double get_cargo_rate_per_km_per_kg() const : double
+  + void set_name(const std::string& name)
+  + void set_distance_km(double distance)
+  + void set_speed_kmh(double speed)
+  + void set_passenger_rate_per_km(double rate)
+  + void set_cargo_rate_per_km_per_kg(double rate)
+}
+
+class Car {
+  + Car(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
+  + TransportVehicle* clone() const : TransportVehicle*
+  + std::string type_name() const : std::string
+  + void input_info()
+  + void printHeader()
+  + void printTable()
+}
+
+class Bicycle {
+  + Bicycle(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
+  + TransportVehicle* clone() const : TransportVehicle*
+  + std::string type_name() const : std::string
+  + void input_info()
+  + void printHeader()
+  + void printTable()
+}
+
+class Cart {
+  + Cart(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
+  + TransportVehicle* clone() const : TransportVehicle*
+  + std::string type_name() const : std::string
+  + void input_info()
+  + void printHeader()
+  + void printTable()
+}
+
+TransportVehicle <|-- Car
+TransportVehicle <|-- Bicycle
+TransportVehicle <|-- Cart
+@enduml

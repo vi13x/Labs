@@ -78,27 +78,33 @@ void TransportVehicle::input_info_cargo(double weightKg) const {
 }
 
 void TransportVehicle::printHeader() {
-    std::cout << std::setw(4) << "#"
-              << std::setw(14) << "Type"
+    std::cout << std::left
+              << std::setw(5)  << "#"
+              << std::setw(12) << "Type"
               << std::setw(20) << "Name"
-              << std::setw(14) << "Distance"
-              << std::setw(12) << "Speed"
-              << std::setw(18) << "Price/km passenger"
-              << std::setw(18) << "Price/km kg"
-              << std::setw(20) << "Time" << std::endl;
+              << std::setw(12) << "Distance"
+              << std::setw(10) << "Speed"
+              << std::setw(20) << "Price/km(pass)"
+              << std::setw(15) << "Price/km(kg)"
+              << std::setw(10) << "Time"
+              << std::endl;
+
+    std::cout << std::setfill('-') << std::setw(104) << "-" << std::setfill(' ') << std::endl;
 }
 
 void TransportVehicle::printTable() {
-    std::cout << std::setw(4) << ""
-              << std::setw(14) << type_name()
+    std::cout << std::left
+              << std::setw(5)  << ""
+              << std::setw(12) << type_name()
               << std::setw(20) << name
-              << std::setw(14) << distanceKm
-              << std::setw(12) << speedKmh
-              << std::setw(18) << passengerRatePerKm
-              << std::setw(18) << cargoRatePerKmPerKg
-              << std::setw(20) << std::fixed << std::setprecision(2) << time_in_path_hours()
+              << std::setw(12) << std::fixed << std::setprecision(2) << distanceKm
+              << std::setw(10) << std::fixed << std::setprecision(2) << speedKmh
+              << std::setw(20) << std::fixed << std::setprecision(2) << passengerRatePerKm
+              << std::setw(15) << std::fixed << std::setprecision(2) << cargoRatePerKmPerKg
+              << std::setw(10) << std::fixed << std::setprecision(2) << time_in_path_hours()
               << std::endl;
 }
+
 
 std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
     os << vehicle.type_name() << " - " << vehicle.get_name();

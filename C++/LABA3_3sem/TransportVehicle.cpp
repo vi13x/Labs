@@ -105,6 +105,20 @@ void TransportVehicle::printTable() {
               << std::endl;
 }
 
+void TransportVehicle::display(int index) {
+    // Если это первый объект, выводим шапку таблицы
+    if (index == 0) {
+        std::cout << "\n" << std::setfill('=') << std::setw(120) << "=" << std::setfill(' ') << std::endl;
+        std::cout << "                 TRANSPORT VEHICLES" << std::endl;
+        std::cout << std::setfill('=') << std::setw(120) << "=" << std::setfill(' ') << std::endl;
+        printHeader();
+        std::cout << std::setfill('-') << std::setw(120) << "-" << std::setfill(' ') << std::endl;
+    }
+    // Выводим данные объекта
+    std::cout << std::setw(4) << (index + 1);
+    printTable();
+}
+
 
 std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
     os << vehicle.type_name() << " - " << vehicle.get_name();

@@ -16,6 +16,7 @@ public:
     void input_info() override;
     void printHeader() override;
     void printTable() override;
+    void display(int index = 0) override;
 };
 
 

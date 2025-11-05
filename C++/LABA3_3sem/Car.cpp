@@ -28,3 +28,7 @@ void Car::printHeader() {
 void Car::printTable() {
     TransportVehicle::printTable();
 }
+
+void Car::display(int index) {
+    TransportVehicle::display(index);
+}

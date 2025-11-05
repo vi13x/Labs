@@ -81,20 +81,17 @@ void addObject() {
 }
 
 void showAll() {
-    cout << "\n" << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
-    cout << "                 TRANSPORT VEHICLES" << endl;
-    cout << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
-    
     if (objectCount > 0) {
-        objects[0]->printHeader();
-        cout << setfill('-') << setw(120) << "-" << setfill(' ') << endl;
         for (int i = 0; i < objectCount; i++) {
-            cout << setw(4) << (i + 1);
-            objects[i]->printTable();
+            objects[i]->display(i);
         }
         cout << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
     } else {
+        cout << "\n" << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
+        cout << "                 TRANSPORT VEHICLES" << endl;
+        cout << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
         cout << "No Transport Vehicles found." << endl;
+        cout << setfill('=') << setw(120) << "=" << setfill(' ') << endl;
     }
 }
 

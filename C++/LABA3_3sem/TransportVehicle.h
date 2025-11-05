@@ -9,8 +9,8 @@ protected:
     std::string name;
     double distanceKm{};
     double speedKmh{};
-    double passengerRatePerKm{}; // rub per km per passenger
-    double cargoRatePerKmPerKg{}; // rub per km per kg
+    double passengerRatePerKm{};
+    double cargoRatePerKmPerKg{};
 
 public:
     TransportVehicle();
@@ -22,21 +22,14 @@ public:
                      double cargoRatePerKmPerKg);
 
     virtual ~TransportVehicle();
-
-    // cloning to allow copying polymorphic objects
     virtual TransportVehicle* clone() const;
-
-    // type name for display
     virtual std::string type_name() const;
 
     virtual double time_in_path_hours() const;
-
     virtual double cost_passengers(int numPassengers) const;
-
     virtual double cost_cargo(double weightKg) const;
 
     void input_info_passengers(int numPassengers) const;
-
     void input_info_cargo(double weightKg) const;
 
     // getters
@@ -57,6 +50,7 @@ public:
     virtual void input_info();
     virtual void printHeader();
     virtual void printTable();
+    virtual void display(int index = 0); // Вывод шапки и данных объекта
 
     // Операторы ввода/вывода
     friend std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle);

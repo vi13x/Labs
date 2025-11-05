@@ -28,3 +28,7 @@ void Cart::printHeader() {
 void Cart::printTable() {
     TransportVehicle::printTable();
 }
+
+void Cart::display(int index) {
+    TransportVehicle::display(index);
+}

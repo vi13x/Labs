@@ -28,3 +28,7 @@ void Bicycle::printHeader() {
 void Bicycle::printTable() {
     TransportVehicle::printTable();
 }
+
+void Bicycle::display(int index) {
+    TransportVehicle::display(index);
+}

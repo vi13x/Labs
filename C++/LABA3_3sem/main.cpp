@@ -24,8 +24,8 @@ void printMenu() {
     cout << "\n " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
 
     string title = "TRANSPORT VEHICLE MANAGEMENT SYSTEM";
-    int padding = (width - 2 - (int)title.length()) / 2;
-    cout << " |" << setw(padding) << " " << title << setw(width - 2 - padding - (int)title.length()) << " " << "|" << endl;
+    int padding = (width - 2 - static_cast<int>(title.length())) / 2;
+    cout << " |" << setw(padding) << " " << title << setw(width - 2 - padding - static_cast<int>(title.length())) << " " << "|" << endl;
 
     cout << " " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
 

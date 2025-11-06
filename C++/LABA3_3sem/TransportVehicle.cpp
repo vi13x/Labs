@@ -58,7 +58,7 @@ void TransportVehicle::input_info_passengers(int numPassengers) const {
     std::cout << std::setw(25) << "Distance: " << std::setw(15) << distanceKm << " км" << std::endl;
     std::cout << std::setw(25) << "Cost per km:" << std::setw(15) << passengerRatePerKm << " руб/пасс" << std::endl;
     std::cout << std::setw(25) << "Speed: " << std::setw(15) << speedKmh << " км/ч" << std::endl;
-    std::cout << std::setw(25) << "Passengers: " << std::setw(15) << numPassengers << std::endl;
+    std::cout << std::setw(25) << "Passengers: " << std::setw(15) << static_cast<int>(numPassengers) << std::endl;
     std::cout << std::setw(25) << "Cost of the all trip: " << std::setw(15)
               << std::fixed << std::setprecision(2) << cost_passengers(numPassengers) << " руб" << std::endl;
     std::cout << std::setw(25) << "Time in trip:" << std::setw(15)
@@ -115,17 +115,17 @@ void TransportVehicle::display(int index) {
         std::cout << std::setfill('-') << std::setw(120) << "-" << std::setfill(' ') << std::endl;
     }
     // Выводим данные объекта
-    std::cout << std::setw(4) << (index + 1);
+    std::cout << std::setw(4) << static_cast<int>(index + 1);
     printTable();
 }
 
 
 std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
     os << vehicle.type_name() << " - " << vehicle.get_name();
-    return os;
+    return static_cast<std::ostream&>(os);
 }
 
 std::istream& operator>>(std::istream& is, TransportVehicle& vehicle) {
     vehicle.input_info();
-    return is;
+    return static_cast<std::istream&>(is);
 }

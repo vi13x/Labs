@@ -1,0 +1,91 @@
+UML Class Diagram for Transport Vehicle Management System
+========================================================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     TransportVehicle                            │
+│                     (Abstract Base Class)                       │
+├─────────────────────────────────────────────────────────────────┤
+│ # name : std::string                                            │
+│ # distanceKm : double                                           │
+│ # speedKmh : double                                              │
+│ # passengerRatePerKm : double                                    │
+│ # cargoRatePerKmPerKg : double                                  │
+├─────────────────────────────────────────────────────────────────┤
+│ + TransportVehicle()                                            │
+│ + TransportVehicle(name, distanceKm, speedKmh,                  │
+│                    passengerRatePerKm, cargoRatePerKmPerKg)    │
+│ + ~TransportVehicle() {virtual}                                │
+│ + clone() : TransportVehicle* {virtual}                        │
+│ + type_name() : std::string {virtual}                          │
+│ + time_in_path_hours() : double {virtual}                      │
+│ + cost_passengers(numPassengers: int) : double                 │
+│ + cost_cargo(weightKg: double) : double                        │
+│ + input_info_passengers(numPassengers: int) : void              │
+│ + input_info_cargo(weightKg: double) : void                     │
+│ + get_name() : const std::string&                               │
+│ + get_distance_km() : double                                    │
+│ + get_speed_kmh() : double                                      │
+│ + get_passenger_rate_per_km() : double                         │
+│ + get_cargo_rate_per_km_per_kg() : double                       │
+│ + set_name(n: const std::string&) : void                       │
+│ + set_distance_km(d: double) : void                            │
+│ + set_speed_kmh(s: double) : void                              │
+│ + set_passenger_rate_per_km(r: double) : void                  │
+│ + set_cargo_rate_per_km_per_kg(r: double) : void               │
+│ + input_info() : void {virtual}                                │
+│ + printHeader() : void {virtual}                               │
+│ + printTable() : void {virtual}                                │
+│ + display(index: int = 0) : void {virtual}                     │
+│                                                                 │
+│ {friend} operator<<(os: std::ostream&,                          │
+│                     vehicle: const TransportVehicle&)           │
+│         : std::ostream&                                         │
+│ {friend} operator>>(is: std::istream&,                          │
+│                     vehicle: TransportVehicle&)                 │
+│         : std::istream&                                         │
+└─────────────────────────────────────────────────────────────────┘
+                              △
+                              │
+                 ┌────────────┼────────────┐
+                 │            │            │
+                 │            │            │
+                 │            │            │
+    ┌────────────▼──┐  ┌──────▼─────┐  ┌───▼───────┐
+    │     Car       │  │  Bicycle   │  │   Cart    │
+    ├───────────────┤  ├────────────┤  ├───────────┤
+    │               │  │            │  │           │
+    ├───────────────┤  ├────────────┤  ├───────────┤
+    │ + Car(...)    │  │ + Bicycle( │  │ + Cart(...│
+    │ + clone()     │  │    ...)    │  │    )      │
+    │ + type_name() │  │ + clone()  │  │ + clone() │
+    │ + input_info()│  │ + type_name│  │ + type_   │
+    │ + printHeader │  │    ()      │  │   name()  │
+    │    ()         │  │ + input_   │  │ + input_  │
+    │ + printTable()│  │    info()  │  │   info()  │
+    │ + display()   │  │ + print    │  │ + print   │
+    │               │  │    Header()│  │   Header()│
+    │               │  │ + print    │  │ + print   │
+    │               │  │    Table() │  │   Table() │
+    │               │  │ + display()│  │ + display │
+    │               │  │            │  │    ()     │
+    └───────────────┘  └────────────┘  └───────────┘
+
+Legend:
+  + = public
+  # = protected
+  - = private
+  {virtual} = virtual method
+  {friend} = friend function
+  △ = inheritance (is-a relationship)
+
+Relationships:
+  - TransportVehicle is the abstract base class
+  - Car, Bicycle, and Cart inherit from TransportVehicle
+  - All three child classes override virtual methods:
+    * clone()
+    * type_name()
+    * input_info()
+    * printHeader()
+    * printTable()
+    * display()
+

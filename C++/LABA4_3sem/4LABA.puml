@@ -1,0 +1,165 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam dpi 150
+
+' ===== БАЗОВЫЙ КЛАСС =====
+class TransportVehicle {
+  - name : std::string
+  - distanceKm : double
+  - speedKmh : double
+  - passengerRatePerKm : double
+  - cargoRatePerKmPerKg : double
+
+  + TransportVehicle()
+  + TransportVehicle(name : std::string, distanceKm : double,
+                     speedKmh : double, passengerRatePerKm : double,
+                     cargoRatePerKmPerKg : double)
+  + ~TransportVehicle()
+
+  + clone() : TransportVehicle*
+  + type_name() : std::string
+  + time_in_path_hours() : double
+  + cost_passengers(numPassengers : int) : double
+  + cost_cargo(weightKg : double) : double
+
+  + input_info() : void
+  + input_info_passengers(numPassengers : int) : void
+  + input_info_cargo(weightKg : double) : void
+
+  + printHeader() : void
+  + printTable() : void
+  + display(index : int = 0) : void
+
+  + get_name() : const std::string&
+  + get_distance_km() : double
+  + get_speed_kmh() : double
+  + get_passenger_rate_per_km() : double
+  + get_cargo_rate_per_km_per_kg() : double
+
+  + set_name(n : const std::string&) : void
+  + set_distance_km(d : double) : void
+  + set_speed_kmh(s : double) : void
+  + set_passenger_rate_per_km(r : double) : void
+  + set_cargo_rate_per_km_per_kg(r : double) : void
+
+  + operator==(other : const TransportVehicle&) : bool
+  ..friend..
+  + operator<<(os : std::ostream&, v : const TransportVehicle&) : std::ostream&
+  + operator>>(is : std::istream&, v : TransportVehicle&) : std::istream&
+}
+
+' ===== ДОЧЕРНИЕ КЛАССЫ =====
+class Car {
+  + Car(name : std::string = "", distanceKm : double = 0,
+        speedKmh : double = 0, passengerRatePerKm : double = 0,
+        cargoRatePerKmPerKg : double = 0)
+
+  + clone() : TransportVehicle*
+  + type_name() : std::string
+
+  + input_info() : void
+  + printHeader() : void
+  + printTable() : void
+  + display(index : int = 0) : void
+
+  + operator=(other : const Car&) : Car&
+  ..friend..
+  + operator<<(os : std::ostream&, c : const Car&) : std::ostream&
+  + operator>>(is : std::istream&, c : Car&) : std::istream&
+}
+
+class Bicycle {
+  + Bicycle(name : std::string = "", distanceKm : double = 0,
+            speedKmh : double = 0, passengerRatePerKm : double = 0,
+            cargoRatePerKmPerKg : double = 0)
+
+  + clone() : TransportVehicle*
+  + type_name() : std::string
+
+  + input_info() : void
+  + printHeader() : void
+  + printTable() : void
+  + display(index : int = 0) : void
+
+  + operator=(other : const Bicycle&) : Bicycle&
+  ..friend..
+  + operator<<(os : std::ostream&, b : const Bicycle&) : std::ostream&
+  + operator>>(is : std::istream&, b : Bicycle&) : std::istream&
+}
+
+class Cart {
+  + Cart(name : std::string = "", distanceKm : double = 0,
+         speedKmh : double = 0, passengerRatePerKm : double = 0,
+         cargoRatePerKmPerKg : double = 0)
+
+  + clone() : TransportVehicle*
+  + type_name() : std::string
+
+  + input_info() : void
+  + printHeader() : void
+  + printTable() : void
+  + display(index : int = 0) : void
+
+  + operator=(other : const Cart&) : Cart&
+  ..friend..
+  + operator<<(os : std::ostream&, c : const Cart&) : std::ostream&
+  + operator>>(is : std::istream&, c : Cart&) : std::istream&
+}
+
+TransportVehicle <|-- Car
+TransportVehicle <|-- Bicycle
+TransportVehicle <|-- Cart
+
+' ===== ШАБЛОННЫЙ ДЭК =====
+class "DequeNode<T>" as DequeNodeT {
+  - data : T
+  - prev : DequeNode<T>*
+  - next : DequeNode<T>*
+
+  + DequeNode(value : const T&)
+}
+
+class "Deque<T>" as DequeT {
+  - head : DequeNode<T>*
+  - tail : DequeNode<T>*
+  - sz : std::size_t
+
+  + Deque()
+  + ~Deque()
+
+  + empty() : bool
+  + size() : std::size_t
+
+  + push_back(value : const T&) : void
+  + push_front(value : const T&) : void
+  + pop_back() : void
+  + pop_front() : void
+
+  + operator[](index : std::size_t) : T&
+  + operator[](index : std::size_t) const : const T&
+
+  + erase(index : std::size_t) : void
+  + clear() : void
+}
+
+DequeNodeT "1" o-- "0..1" DequeNodeT : prev
+DequeNodeT "1" o-- "0..1" DequeNodeT : next
+DequeT "1" o-- "0..1" DequeNodeT : head/tail
+
+' ===== ГЛАВНАЯ ПРОГРАММА (условно) =====
+class Main {
+  + main() : int
+  --
+  - addObject() : void
+  - showAll() : void
+  - editObject() : void
+  - deleteObject() : void
+  - calculateCosts() : void
+  - findByName() : void
+  - sortByName() : void
+}
+
+Main --> "Deque<TransportVehicle*>" : использует\nvehicleDeque
+DequeT <.. Main : Deque<TransportVehicle*>
+
+@enduml

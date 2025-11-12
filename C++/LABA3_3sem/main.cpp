@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const int MAX_OBJECTS = 10;
+const int MAX_OBJECTS = 100;
 TransportVehicle* objects[MAX_OBJECTS];
 int objectCount = 0;
 
@@ -56,7 +56,7 @@ void addObject() {
     clearInput();
     
     TransportVehicle* newObject = nullptr;
-    
+
     switch (type) {
         case 1:
             newObject = new Car("", 0, 0, 0, 0);
@@ -201,7 +201,8 @@ void calculateCosts() {
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     int choice;
-    
+
+
     do {
         printMenu();
         cin >> choice;
@@ -224,7 +225,7 @@ int main() {
                 calculateCosts();
                 break;
             case 0:
-                cout << "Goodbye!\n";
+                cout << "Exit\n";
                 break;
             default:
                 cout << "Invalid option!\n";

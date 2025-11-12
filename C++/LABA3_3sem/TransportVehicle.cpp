@@ -17,6 +17,17 @@ TransportVehicle::TransportVehicle(std::string name,
 
 TransportVehicle::~TransportVehicle() = default;
 
+TransportVehicle& TransportVehicle::operator=(const TransportVehicle& other) {
+    if (this != &other) {
+        name = other.name;
+        distanceKm = other.distanceKm;
+        speedKmh = other.speedKmh;
+        passengerRatePerKm = other.passengerRatePerKm;
+        cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
+    }
+    return *this;
+}
+
 TransportVehicle* TransportVehicle::clone() const {
     return new TransportVehicle(*this);
 }

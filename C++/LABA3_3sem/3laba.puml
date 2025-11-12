@@ -1,68 +1,101 @@
 @startuml
-title LABA3_3sem — Transport Vehicles
+!theme plain
+skinparam classAttributeIconSize 0
 
 class TransportVehicle {
-  - std::string name
-  - double distanceKm
-  - double speedKmh
-  - double passengerRatePerKm
-  - double cargoRatePerKmPerKg
-
+  # -name : std::string
+  # -distanceKm : double
+  # -speedKmh : double
+  # -passengerRatePerKm : double
+  # -cargoRatePerKmPerKg : double
+  ..
   + TransportVehicle()
-  + TransportVehicle(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
-  + virtual ~TransportVehicle()
-
-  + virtual std::string type_name() const : std::string
-  + virtual double time_in_path_hours() const : double
-  + virtual double cost_passengers(int numPassengers) const : double
-  + virtual double cost_cargo(double weightKg) const : double
-
-  + void input_info()
-  + void input_info_passengers(int numPassengers) const
-  + void input_info_cargo(double weightKg) const
-  + virtual void printHeader()
-  + virtual void printTable()
-
-  + std::string get_name() const : std::string
-  + double get_distance_km() const : double
-  + double get_speed_kmh() const : double
-  + double get_passenger_rate_per_km() const : double
-  + double get_cargo_rate_per_km_per_kg() const : double
-  + void set_name(const std::string& name)
-  + void set_distance_km(double distance)
-  + void set_speed_kmh(double speed)
-  + void set_passenger_rate_per_km(double rate)
-  + void set_cargo_rate_per_km_per_kg(double rate)
+  + TransportVehicle(name: std::string, distanceKm: double, speedKmh: double, passengerRatePerKm: double, cargoRatePerKmPerKg: double)
+  + {abstract} ~TransportVehicle()
+  + {abstract} +clone() : TransportVehicle*
+  + {abstract} +type_name() : std::string
+  + {abstract} +time_in_path_hours() : double
+  + +cost_passengers(numPassengers: int) : double
+  + +cost_cargo(weightKg: double) : double
+  + +input_info_passengers(numPassengers: int) : void
+  + +input_info_cargo(weightKg: double) : void
+  + +get_name() : const std::string&
+  + +get_distance_km() : double
+  + +get_speed_kmh() : double
+  + +get_passenger_rate_per_km() : double
+  + +get_cargo_rate_per_km_per_kg() : double
+  + +set_name(n: const std::string&) : void
+  + +set_distance_km(d: double) : void
+  + +set_speed_kmh(s: double) : void
+  + +set_passenger_rate_per_km(r: double) : void
+  + +set_cargo_rate_per_km_per_kg(r: double) : void
+  + {abstract} +input_info() : void
+  + {abstract} +printHeader() : void
+  + {abstract} +printTable() : void
+  + {abstract} +display(index: int = 0) : void
+  ..
+  + {friend} operator<<(os: std::ostream&, vehicle: const TransportVehicle&) : std::ostream&
+  + {friend} operator>>(is: std::istream&, vehicle: TransportVehicle&) : std::istream&
 }
 
 class Car {
-  + Car(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
-  + TransportVehicle* clone() const : TransportVehicle*
-  + std::string type_name() const : std::string
-  + void input_info()
-  + void printHeader()
-  + void printTable()
+  + Car(name: const std::string&, distanceKm: double, speedKmh: double, passengerRatePerKm: double, cargoRatePerKmPerKg: double)
+  + +clone() : TransportVehicle*
+  + +type_name() : std::string
+  + +input_info() : void
+  + +printHeader() : void
+  + +printTable() : void
+  + +display(index: int = 0) : void
 }
 
 class Bicycle {
-  + Bicycle(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
-  + TransportVehicle* clone() const : TransportVehicle*
-  + std::string type_name() const : std::string
-  + void input_info()
-  + void printHeader()
-  + void printTable()
+  + Bicycle(name: const std::string&, distanceKm: double, speedKmh: double, passengerRatePerKm: double, cargoRatePerKmPerKg: double)
+  + +clone() : TransportVehicle*
+  + +type_name() : std::string
+  + +input_info() : void
+  + +printHeader() : void
+  + +printTable() : void
+  + +display(index: int = 0) : void
 }
 
 class Cart {
-  + Cart(const std::string& name, double distanceKm, double speedKmh, double passengerRatePerKm, double cargoRatePerKmPerKg)
-  + TransportVehicle* clone() const : TransportVehicle*
-  + std::string type_name() const : std::string
-  + void input_info()
-  + void printHeader()
-  + void printTable()
+  + Cart(name: const std::string&, distanceKm: double, speedKmh: double, passengerRatePerKm: double, cargoRatePerKmPerKg: double)
+  + +clone() : TransportVehicle*
+  + +type_name() : std::string
+  + +input_info() : void
+  + +printHeader() : void
+  + +printTable() : void
+  + +display(index: int = 0) : void
 }
 
 TransportVehicle <|-- Car
 TransportVehicle <|-- Bicycle
 TransportVehicle <|-- Cart
+
+note right of TransportVehicle
+  Базовый класс для всех
+  транспортных средств.
+  Содержит общую логику
+  расчета стоимости и времени.
+end note
+
+note right of Car
+  Класс автомобиля.
+  Переопределяет виртуальные
+  методы базового класса.
+end note
+
+note right of Bicycle
+  Класс велосипеда.
+  Переопределяет виртуальные
+  методы базового класса.
+end note
+
+note right of Cart
+  Класс телеги.
+  Переопределяет виртуальные
+  методы базового класса.
+end note
+
 @enduml
+

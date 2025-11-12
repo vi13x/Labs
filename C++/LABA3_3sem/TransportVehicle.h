@@ -52,6 +52,7 @@ public:
     virtual void printTable();
     virtual void display(int index = 0); // Вывод шапки и данных объекта
 
+    TransportVehicle& operator=(const TransportVehicle& other);
     // Операторы ввода/вывода
     friend std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle);
     friend std::istream& operator>>(std::istream& is, TransportVehicle& vehicle);

@@ -51,31 +51,31 @@ build cmake_object_order_depends_target_LABA3_3sem: phony || .
 
 build CMakeFiles/LABA3_3sem.dir/main.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/main.cpp || cmake_object_order_depends_target_LABA3_3sem
   DEP_FILE = CMakeFiles\LABA3_3sem.dir\main.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
   OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
 build CMakeFiles/LABA3_3sem.dir/TransportVehicle.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/TransportVehicle.cpp || cmake_object_order_depends_target_LABA3_3sem
   DEP_FILE = CMakeFiles\LABA3_3sem.dir\TransportVehicle.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
-
-build CMakeFiles/LABA3_3sem.dir/Car.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Car.cpp || cmake_object_order_depends_target_LABA3_3sem
-  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Car.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
-
-build CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Bicycle.cpp || cmake_object_order_depends_target_LABA3_3sem
-  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Bicycle.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
   OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
 build CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Cart.cpp || cmake_object_order_depends_target_LABA3_3sem
   DEP_FILE = CMakeFiles\LABA3_3sem.dir\Cart.cpp.obj.d
-  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
+
+build CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Bicycle.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Bicycle.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
+
+build CMakeFiles/LABA3_3sem.dir/Car.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Car.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Car.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
   OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
@@ -87,7 +87,7 @@ build CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned
 #############################################
 # Link the executable LABA3_3sem.exe
 
-build LABA3_3sem.exe: CXX_EXECUTABLE_LINKER__LABA3_3sem_Debug CMakeFiles/LABA3_3sem.dir/main.cpp.obj CMakeFiles/LABA3_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA3_3sem.dir/Car.cpp.obj CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj
+build LABA3_3sem.exe: CXX_EXECUTABLE_LINKER__LABA3_3sem_Debug CMakeFiles/LABA3_3sem.dir/main.cpp.obj CMakeFiles/LABA3_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj CMakeFiles/LABA3_3sem.dir/Car.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\LABA3_3sem.dir

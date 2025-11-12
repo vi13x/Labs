@@ -2,8 +2,6 @@
 #include <iostream>
 #include <iomanip>
 
-Bicycle::Bicycle() = default;
-
 Bicycle::Bicycle(const std::string &name,
                  double distanceKm,
                  double speedKmh,
@@ -11,25 +9,8 @@ Bicycle::Bicycle(const std::string &name,
                  double cargoRatePerKmPerKg)
         : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
 
-Bicycle& Bicycle::operator=(const Bicycle& other) {
-    if (this != &other) {
-        TransportVehicle::operator=(other);
-    }
-    return *this;
-}
-
 TransportVehicle* Bicycle::clone() const {
     return new Bicycle(*this);
-}
-
-std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle) {
-    os << bicycle.type_name() << " - " << bicycle.get_name();
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, Bicycle& bicycle) {
-    bicycle.input_info();
-    return is;
 }
 
 std::string Bicycle::type_name() const {
@@ -37,6 +18,7 @@ std::string Bicycle::type_name() const {
 }
 
 void Bicycle::input_info() {
+    std::cout << "[Bicycle] Input data:\n";
     TransportVehicle::input_info();
 }
 
@@ -50,4 +32,30 @@ void Bicycle::printTable() {
 
 void Bicycle::display(int index) {
     TransportVehicle::display(index);
+}
+
+// ===== Уникальный оператор присваивания =====
+Bicycle& Bicycle::operator=(const Bicycle& other) {
+    if (this != &other) {
+        this->name                = other.name;
+        this->distanceKm          = other.distanceKm;
+        this->speedKmh            = other.speedKmh;
+        this->passengerRatePerKm  = other.passengerRatePerKm;
+        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
+    }
+    return *this;
+}
+
+// ===== Уникальная перегрузка вывода =====
+std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle) {
+    os << "[Bicycle object] ";
+    os << static_cast<const TransportVehicle&>(bicycle);
+    return os;
+}
+
+// ===== Уникальная перегрузка ввода =====
+std::istream& operator>>(std::istream& is, Bicycle& bicycle) {
+    std::cout << ">>> Enter data for Bicycle <<<\n";
+    bicycle.input_info();
+    return is;
 }

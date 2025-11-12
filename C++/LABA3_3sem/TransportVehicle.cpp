@@ -1,6 +1,5 @@
 #include "TransportVehicle.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
 TransportVehicle::TransportVehicle() = default;
 
@@ -16,17 +15,6 @@ TransportVehicle::TransportVehicle(std::string name,
           cargoRatePerKmPerKg(cargoRatePerKmPerKg) {}
 
 TransportVehicle::~TransportVehicle() = default;
-
-TransportVehicle& TransportVehicle::operator=(const TransportVehicle& other) {
-    if (this != &other) {
-        name = other.name;
-        distanceKm = other.distanceKm;
-        speedKmh = other.speedKmh;
-        passengerRatePerKm = other.passengerRatePerKm;
-        cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
-    }
-    return *this;
-}
 
 TransportVehicle* TransportVehicle::clone() const {
     return new TransportVehicle(*this);
@@ -53,90 +41,80 @@ double TransportVehicle::cost_cargo(double weightKg) const {
 
 void TransportVehicle::input_info() {
     std::cout << "Enter name: ";
-    std::getline(std::cin, name);
-    std::cout << "Enter distance (км): ";
+    std::getline(std::cin >> std::ws, name);
+    std::cout << "Enter distance (km): ";
     std::cin >> distanceKm;
-    std::cout << "Enter speed (км/ч): ";
+    std::cout << "Enter speed (km/h): ";
     std::cin >> speedKmh;
-    std::cout << "Enter cost per km (пассажир): ";
+    std::cout << "Enter cost per km (passenger): ";
     std::cin >> passengerRatePerKm;
-    std::cout << "Enter cost per km (кг груза): ";
+    std::cout << "Enter cost per km (kg of cargo): ";
     std::cin >> cargoRatePerKmPerKg;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void TransportVehicle::input_info_passengers(int numPassengers) const {
     std::cout << std::setw(25) << "Name: " << std::setw(15) << name << std::endl;
-    std::cout << std::setw(25) << "Distance: " << std::setw(15) << distanceKm << " км" << std::endl;
-    std::cout << std::setw(25) << "Cost per km:" << std::setw(15) << passengerRatePerKm << " руб/пасс" << std::endl;
-    std::cout << std::setw(25) << "Speed: " << std::setw(15) << speedKmh << " км/ч" << std::endl;
-    std::cout << std::setw(25) << "Passengers: " << std::setw(15) << static_cast<int>(numPassengers) << std::endl;
-    std::cout << std::setw(25) << "Cost of the all trip: " << std::setw(15)
-              << std::fixed << std::setprecision(2) << cost_passengers(numPassengers) << " руб" << std::endl;
+    std::cout << std::setw(25) << "Distance: " << std::setw(15) << distanceKm << " km" << std::endl;
+    std::cout << std::setw(25) << "Cost per km:" << std::setw(15) << passengerRatePerKm << " per passenger" << std::endl;
+    std::cout << std::setw(25) << "Speed: " << std::setw(15) << speedKmh << " km/h" << std::endl;
+    std::cout << std::setw(25) << "Passengers: " << std::setw(15) << numPassengers << std::endl;
+    std::cout << std::setw(25) << "Total cost: " << std::setw(15)
+              << std::fixed << std::setprecision(2) << cost_passengers(numPassengers) << std::endl;
     std::cout << std::setw(25) << "Time in trip:" << std::setw(15)
-              << std::fixed << std::setprecision(2) << time_in_path_hours() << " ч" << std::endl;
+              << std::fixed << std::setprecision(2) << time_in_path_hours() << " h" << std::endl;
 }
 
 void TransportVehicle::input_info_cargo(double weightKg) const {
     std::cout << std::setw(25) << "Name: " << std::setw(15) << name << std::endl;
-    std::cout << std::setw(25) << "Distance: " << std::setw(15) << distanceKm << " км" << std::endl;
-    std::cout << std::setw(25) << "Cost per km:" << std::setw(15) << cargoRatePerKmPerKg << " руб/кг" << std::endl;
-    std::cout << std::setw(25) << "Speed: " << std::setw(15) << speedKmh << " км/ч" << std::endl;
-    std::cout << std::setw(25) << "Cargo weight: " << std::setw(15) << weightKg << " кг" << std::endl;
-    std::cout << std::setw(25) << "Cost of the all trip: " << std::setw(15)
-              << std::fixed << std::setprecision(2) << cost_cargo(weightKg) << " руб" << std::endl;
+    std::cout << std::setw(25) << "Distance: " << std::setw(15) << distanceKm << " km" << std::endl;
+    std::cout << std::setw(25) << "Cost per km:" << std::setw(15) << cargoRatePerKmPerKg << " per kg" << std::endl;
+    std::cout << std::setw(25) << "Speed: " << std::setw(15) << speedKmh << " km/h" << std::endl;
+    std::cout << std::setw(25) << "Cargo weight: " << std::setw(15) << weightKg << " kg" << std::endl;
+    std::cout << std::setw(25) << "Total cost: " << std::setw(15)
+              << std::fixed << std::setprecision(2) << cost_cargo(weightKg) << std::endl;
     std::cout << std::setw(25) << "Time in trip:" << std::setw(15)
-              << std::fixed << std::setprecision(2) << time_in_path_hours() << " ч" << std::endl;
+              << std::fixed << std::setprecision(2) << time_in_path_hours() << " h" << std::endl;
 }
 
 void TransportVehicle::printHeader() {
-    std::cout << std::left
-              << std::setw(5)  << "#"
-              << std::setw(12) << "Type"
-              << std::setw(20) << "Name"
-              << std::setw(12) << "Distance"
-              << std::setw(10) << "Speed"
-              << std::setw(20) << "Price/km(pass)"
-              << std::setw(15) << "Price/km(kg)"
-              << std::setw(10) << "Time"
-              << std::endl;
-
-    std::cout << std::setfill('-') << std::setw(104) << "-" << std::setfill(' ') << std::endl;
+    std::cout << "+----+------------+----------------------+------------+----------+--------------------+---------------+----------+\n";
+    std::cout << "| #  | Type       | Name                 |   Distance |   Speed  |   Price/km(pass.)  |  Price/km(kg) |   Time   |\n";
+    std::cout << "+----+------------+----------------------+------------+----------+--------------------+---------------+----------+\n";
 }
 
 void TransportVehicle::printTable() {
-    std::cout << std::left
-              << std::setw(5)  << ""
-              << std::setw(12) << type_name()
-              << std::setw(20) << name
-              << std::setw(12) << std::fixed << std::setprecision(2) << distanceKm
-              << std::setw(10) << std::fixed << std::setprecision(2) << speedKmh
-              << std::setw(20) << std::fixed << std::setprecision(2) << passengerRatePerKm
-              << std::setw(15) << std::fixed << std::setprecision(2) << cargoRatePerKmPerKg
-              << std::setw(10) << std::fixed << std::setprecision(2) << time_in_path_hours()
-              << std::endl;
+    std::cout.setf(std::ios::fixed);
+    std::cout.precision(2);
+
+    std::cout << "" << std::setw(1) << std::left << " "
+              << "|" << std::setw(12) << std::left << type_name()
+              << "| " << std::setw(20) << std::left << name
+              << " | " << std::setw(10) << std::right << distanceKm
+              << " | " << std::setw(8)  << std::right << speedKmh
+              << " | " << std::setw(18) << std::right << passengerRatePerKm
+              << " | " << std::setw(13) << std::right << cargoRatePerKmPerKg
+              << " | " << std::setw(8)  << std::right << time_in_path_hours()
+              << " |\n";
 }
 
 void TransportVehicle::display(int index) {
-    // Если это первый объект, выводим шапку таблицы
     if (index == 0) {
-        std::cout << "\n" << std::setfill('=') << std::setw(120) << "=" << std::setfill(' ') << std::endl;
-        std::cout << "                 TRANSPORT VEHICLES" << std::endl;
-        std::cout << std::setfill('=') << std::setw(120) << "=" << std::setfill(' ') << std::endl;
+        std::cout << "\nALL TRANSPORT VEHICLES\n";
         printHeader();
-        std::cout << std::setfill('-') << std::setw(120) << "-" << std::setfill(' ') << std::endl;
     }
-    // Выводим данные объекта
-    std::cout << std::setw(4) << static_cast<int>(index + 1);
+
+    std::cout << "| " << std::setw(2) << std::left << index + 1;
     printTable();
 }
 
 
 std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
     os << vehicle.type_name() << " - " << vehicle.get_name();
-    return static_cast<std::ostream&>(os);
+    return os;
 }
 
 std::istream& operator>>(std::istream& is, TransportVehicle& vehicle) {
     vehicle.input_info();
-    return static_cast<std::istream&>(is);
+    return is;
 }

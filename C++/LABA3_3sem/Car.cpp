@@ -2,8 +2,6 @@
 #include <iostream>
 #include <iomanip>
 
-Car::Car() = default;
-
 Car::Car(const std::string &name,
          double distanceKm,
          double speedKmh,
@@ -11,25 +9,8 @@ Car::Car(const std::string &name,
          double cargoRatePerKmPerKg)
         : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
 
-Car& Car::operator=(const Car& other) {
-    if (this != &other) {
-        TransportVehicle::operator=(other);
-    }
-    return *this;
-}
-
 TransportVehicle* Car::clone() const {
     return new Car(*this);
-}
-
-std::ostream& operator<<(std::ostream& os, const Car& car) {
-    os << car.type_name() << " - " << car.get_name();
-    return os;
-}
-
-std::istream& operator>>(std::istream& is, Car& car) {
-    car.input_info();
-    return is;
 }
 
 std::string Car::type_name() const {
@@ -37,6 +18,7 @@ std::string Car::type_name() const {
 }
 
 void Car::input_info() {
+    std::cout << "[Car] Input data:\n";
     TransportVehicle::input_info();
 }
 
@@ -50,4 +32,33 @@ void Car::printTable() {
 
 void Car::display(int index) {
     TransportVehicle::display(index);
+}
+
+// ===== Уникальный оператор присваивания =====
+Car& Car::operator=(const Car& other) {
+    if (this != &other) {
+        // копируем базовую часть
+        this->name                = other.name;
+        this->distanceKm          = other.distanceKm;
+        this->speedKmh            = other.speedKmh;
+        this->passengerRatePerKm  = other.passengerRatePerKm;
+        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
+        // если будут свои поля у Car — копировать их здесь
+    }
+    return *this;
+}
+
+// ===== Уникальная перегрузка вывода для Car =====
+std::ostream& operator<<(std::ostream& os, const Car& car) {
+    os << "[Car object] ";
+    // используем базовый оператор вывода для общей части
+    os << static_cast<const TransportVehicle&>(car);
+    return os;
+}
+
+// ===== Уникальная перегрузка ввода для Car =====
+std::istream& operator>>(std::istream& is, Car& car) {
+    std::cout << ">>> Enter data for Car <<<\n";
+    car.input_info(); // использует переопределённый input_info()
+    return is;
 }

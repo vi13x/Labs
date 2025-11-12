@@ -22,6 +22,8 @@ public:
                      double cargoRatePerKmPerKg);
 
     virtual ~TransportVehicle();
+
+    // Базовый полиморфный интерфейс
     virtual TransportVehicle* clone() const;
     virtual std::string type_name() const;
 
@@ -46,16 +48,13 @@ public:
     void set_passenger_rate_per_km(double r) { passengerRatePerKm = r; }
     void set_cargo_rate_per_km_per_kg(double r) { cargoRatePerKmPerKg = r; }
 
-    // Методы для ввода и вывода
+    // Ввод/вывод полей объекта
     virtual void input_info();
     virtual void printHeader();
-    virtual void printTable();
-    virtual void display(int index = 0); // Вывод шапки и данных объекта
+    virtual void printTable();   // строка таблицы без номера
+    virtual void display(int index = 0); // шапка + строка с номером
 
-    TransportVehicle& operator=(const TransportVehicle& other);
     // Операторы ввода/вывода
     friend std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle);
     friend std::istream& operator>>(std::istream& is, TransportVehicle& vehicle);
 };
-
-

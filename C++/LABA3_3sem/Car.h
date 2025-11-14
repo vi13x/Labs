@@ -2,27 +2,38 @@
 
 #include "TransportVehicle.h"
 
-class Car : public TransportVehicle {
+class Car : public TransportVehicle
+{
+private:
+    double fuelPrice{};       // Стоимость топлива за поездку
+    int passengerCapacity{};  // Максимальное количество пассажиров
+    double trunkVolume{};     // Объём багажника (л)
+
 public:
-    Car(const std::string &name = "",
-        double distanceKm = 0,
-        double speedKmh = 0,
-        double passengerRatePerKm = 0,
-        double cargoRatePerKmPerKg = 0);
+    Car();
+    Car(double FuelPrice,
+        int PassengerCapacity,
+        double TrunkVolume,
+        const std::string& Name,
+        double Distance,
+        double PassengerRate,
+        double CargoRate,
+        double Speed);
+    Car(const Car& other);
+    ~Car() override;
 
-    // Полиморфный интерфейс
-    TransportVehicle* clone() const override;
-    std::string type_name() const override;
+    double time_in_path() const override;
+    double cost_passengers(int passengers) const override;
+    double GetFuelPrice() const;
+    int GetPassengerCapacity() const;
+    double GetTrunkVolume() const;
 
-    void input_info() override;
-    void printHeader() override;
-    void printTable() override;
-    void display(int index = 0) override;
+    void SetFuelPrice(double FuelPrice);
+    void SetPassengerCapacity(int PassengerCapacity);
+    void SetTrunkVolume(double TrunkVolume);
 
-    // УНИКАЛЬНЫЙ оператор присваивания для Car
+    friend std::istream& operator>>(std::istream& is, Car& car);
+    friend std::ostream& operator<<(std::ostream& os, const Car& car);
     Car& operator=(const Car& other);
 
-    // УНИКАЛЬНЫЕ перегрузки ввода/вывода для Car
-    friend std::ostream& operator<<(std::ostream& os, const Car& car);
-    friend std::istream& operator>>(std::istream& is, Car& car);
 };

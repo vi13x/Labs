@@ -1,61 +1,120 @@
 #include "Bicycle.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Bicycle::Bicycle(const std::string &name,
-                 double distanceKm,
-                 double speedKmh,
-                 double passengerRatePerKm,
-                 double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Bicycle::Bicycle() = default;
 
-TransportVehicle* Bicycle::clone() const {
-    return new Bicycle(*this);
+Bicycle::Bicycle(int GearCount,
+                 bool HasCargoRack,
+                 double MaxCargo,
+                 const std::string& Name,
+                 double Distance,
+                 double PassengerRate,
+                 double CargoRate,
+                 double Speed)
+    : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed)
+{
+    gearCount = GearCount;
+    hasCargoRack = HasCargoRack;
+    maxCargo = MaxCargo;
 }
 
-std::string Bicycle::type_name() const {
-    return "Bicycle";
+Bicycle::Bicycle(const Bicycle& other) = default;
+
+Bicycle::~Bicycle() = default;
+
+double Bicycle::time_in_path() const
+{
+    // Велосипед делает паузу каждые 30 км по 0.1 часа
+    double stops = distance > 0 ? (distance / 30.0) * 0.1 : 0.0;
+    return TransportVehicle::time_in_path() + stops;
 }
 
-void Bicycle::input_info() {
-    std::cout << "[Bicycle] Input data:\n";
-    TransportVehicle::input_info();
+double Bicycle::cost_cargo(double cargoWeight) const
+{
+    if (cargoWeight > maxCargo)
+    {
+        std::cout << "Превышен максимальный груз!" << std::endl;
+        return 0.0;
+    }
+    return TransportVehicle::cost_cargo(cargoWeight);
 }
 
-void Bicycle::printHeader() {
-    TransportVehicle::printHeader();
+int Bicycle::GetGearCount() const
+{
+    return gearCount;
 }
 
-void Bicycle::printTable() {
-    TransportVehicle::printTable();
+bool Bicycle::GetHasCargoRack() const
+{
+    return hasCargoRack;
 }
 
-void Bicycle::display(int index) {
-    TransportVehicle::display(index);
+double Bicycle::GetMaxCargo() const
+{
+    return maxCargo;
 }
 
-// ===== Уникальный оператор присваивания =====
-Bicycle& Bicycle::operator=(const Bicycle& other) {
-    if (this != &other) {
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
+void Bicycle::SetGearCount(int GearCount)
+{
+    if (GearCount >= 0)
+    {
+        gearCount = GearCount;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+void Bicycle::SetHasCargoRack(bool HasCargoRack)
+{
+    hasCargoRack = HasCargoRack;
+}
+
+void Bicycle::SetMaxCargo(double MaxCargo)
+{
+    if (MaxCargo >= 0)
+    {
+        maxCargo = MaxCargo;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+std::istream& operator>>(std::istream& is, Bicycle& bicycle)
+{
+    std::cout << "--- Ввод данных о велосипеде ---" << std::endl;
+    is >> static_cast<TransportVehicle&>(bicycle);
+    std::cout << "Введите количество передач: ";
+    is >> bicycle.gearCount;
+    std::cout << "Есть багажник? (1 - да, 0 - нет): ";
+    is >> bicycle.hasCargoRack;
+    std::cout << "Введите максимальный груз (кг): ";
+    is >> bicycle.maxCargo;
+    is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle)
+{
+    os << static_cast<const TransportVehicle&>(bicycle)
+       << ", передач: " << bicycle.gearCount
+       << ", багажник: " << (bicycle.hasCargoRack ? "есть" : "нет")
+       << ", макс. груз: " << bicycle.maxCargo << " кг";
+    return os;
+}
+
+Bicycle& Bicycle::operator=(const Bicycle& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+        gearCount = other.gearCount;
+        hasCargoRack = other.hasCargoRack;
+        maxCargo = other.maxCargo;
     }
     return *this;
 }
 
-// ===== Уникальная перегрузка вывода =====
-std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle) {
-    os << "[Bicycle object] ";
-    os << static_cast<const TransportVehicle&>(bicycle);
-    return os;
-}
-
-// ===== Уникальная перегрузка ввода =====
-std::istream& operator>>(std::istream& is, Bicycle& bicycle) {
-    std::cout << ">>> Enter data for Bicycle <<<\n";
-    bicycle.input_info();
-    return is;
-}

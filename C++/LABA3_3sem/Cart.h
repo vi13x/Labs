@@ -2,26 +2,42 @@
 
 #include "TransportVehicle.h"
 
-class Cart : public TransportVehicle {
+class Cart : public TransportVehicle
+{
+private:
+    int horseCount{};        // Количество лошадей
+    double restTime{};       // Время отдыха (часы)
+    double maxPayload{};     // Максимальная грузоподъёмность (кг)
+
 public:
-    Cart(const std::string &name = "",
-         double distanceKm = 0,
-         double speedKmh = 0,
-         double passengerRatePerKm = 0,
-         double cargoRatePerKmPerKg = 0);
+    Cart();
+    Cart(int HorseCount,
+         double RestTime,
+         double MaxPayload,
+         const std::string& Name,
+         double Distance,
+         double PassengerRate,
+         double CargoRate,
+         double Speed);
+    Cart(const Cart& other);
+    ~Cart() override;
 
-    TransportVehicle* clone() const override;
-    std::string type_name() const override;
+    double time_in_path() const override;
+    double cost_cargo(double cargoWeight) const override;
+    void menu() override;
 
-    void input_info() override;
-    void printHeader() override;
-    void printTable() override;
-    void display(int index = 0) override;
+    int GetHorseCount() const;
+    double GetRestTime() const;
+    double GetMaxPayload() const;
 
-    // УНИКАЛЬНЫЙ оператор присваивания для Cart
+    void SetHorseCount(int HorseCount);
+    void SetRestTime(double RestTime);
+    void SetMaxPayload(double MaxPayload);
+
+    friend std::istream& operator>>(std::istream& is, Cart& cart);
+    friend std::ostream& operator<<(std::ostream& os, Cart& cart);
     Cart& operator=(const Cart& other);
 
-    // УНИКАЛЬНЫЕ перегрузки ввода/вывода для Cart
-    friend std::ostream& operator<<(std::ostream& os, const Cart& cart);
-    friend std::istream& operator>>(std::istream& is, Cart& cart);
+    void print_header() const override;
+    void print_table() const override;
 };

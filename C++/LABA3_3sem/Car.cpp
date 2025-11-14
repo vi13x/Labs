@@ -1,64 +1,150 @@
 #include "Car.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Car::Car(const std::string &name,
-         double distanceKm,
-         double speedKmh,
-         double passengerRatePerKm,
-         double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Car::Car() = default;
 
-TransportVehicle* Car::clone() const {
-    return new Car(*this);
+Car::Car(double FuelPrice,
+         int PassengerCapacity,
+         double TrunkVolume,
+         const std::string& Name,
+         double Distance,
+         double PassengerRate,
+         double CargoRate,
+         double Speed)
+    : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed)
+{
+    fuelPrice = FuelPrice;
+    passengerCapacity = PassengerCapacity;
+    trunkVolume = TrunkVolume;
 }
 
-std::string Car::type_name() const {
-    return "Car";
+Car::Car(const Car& other) = default;
+
+Car::~Car() = default;
+
+double Car::time_in_path() const
+{
+    // Автомобиль делает остановки каждые 200 км на 0.25 часа
+    double stops = distance > 0 ? (distance / 200.0) * 0.25 : 0.0;
+    return TransportVehicle::time_in_path() + stops;
 }
 
-void Car::input_info() {
-    std::cout << "[Car] Input data:\n";
-    TransportVehicle::input_info();
+double Car::cost_passengers(int passengers) const
+{
+    double base = TransportVehicle::cost_passengers(passengers);
+    return base + fuelPrice;
 }
 
-void Car::printHeader() {
-    TransportVehicle::printHeader();
+void Car::menu()
+{
+    TransportVehicle::menu();
+    std::cout << "14. Изменить стоимость топлива" << std::endl;
+    std::cout << "15. Получить стоимость топлива" << std::endl;
+    std::cout << "16. Изменить вместимость пассажиров" << std::endl;
+    std::cout << "17. Получить вместимость пассажиров" << std::endl;
+    std::cout << "18. Изменить объём багажника" << std::endl;
+    std::cout << "19. Получить объём багажника" << std::endl;
 }
 
-void Car::printTable() {
-    TransportVehicle::printTable();
+double Car::GetFuelPrice() const
+{
+    return fuelPrice;
 }
 
-void Car::display(int index) {
-    TransportVehicle::display(index);
+int Car::GetPassengerCapacity() const
+{
+    return passengerCapacity;
 }
 
-// ===== Уникальный оператор присваивания =====
-Car& Car::operator=(const Car& other) {
-    if (this != &other) {
-        // копируем базовую часть
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
-        // если будут свои поля у Car — копировать их здесь
+double Car::GetTrunkVolume() const
+{
+    return trunkVolume;
+}
+
+void Car::SetFuelPrice(double FuelPrice)
+{
+    if (FuelPrice >= 0)
+    {
+        fuelPrice = FuelPrice;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+void Car::SetPassengerCapacity(int PassengerCapacity)
+{
+    if (PassengerCapacity >= 0)
+    {
+        passengerCapacity = PassengerCapacity;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+void Car::SetTrunkVolume(double TrunkVolume)
+{
+    if (TrunkVolume >= 0)
+    {
+        trunkVolume = TrunkVolume;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+std::istream& operator>>(std::istream& is, Car& car)
+{
+    is >> static_cast<TransportVehicle&>(car);
+    std::cout << "Введите стоимость топлива за поездку: ";
+    is >> car.fuelPrice;
+    std::cout << "Введите максимальное количество пассажиров: ";
+    is >> car.passengerCapacity;
+    std::cout << "Введите объём багажника (л): ";
+    is >> car.trunkVolume;
+    is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Car& car)
+{
+    os << static_cast<TransportVehicle&>(car);
+    os << std::setw(15) << car.fuelPrice << "| "
+       << std::setw(15) << car.passengerCapacity << "| "
+       << std::setw(15) << car.trunkVolume << "| ";
+    return os;
+}
+
+Car& Car::operator=(const Car& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+        fuelPrice = other.fuelPrice;
+        passengerCapacity = other.passengerCapacity;
+        trunkVolume = other.trunkVolume;
     }
     return *this;
 }
 
-// ===== Уникальная перегрузка вывода для Car =====
-std::ostream& operator<<(std::ostream& os, const Car& car) {
-    os << "[Car object] ";
-    // используем базовый оператор вывода для общей части
-    os << static_cast<const TransportVehicle&>(car);
-    return os;
+void Car::print_header() const
+{
+    TransportVehicle::print_header();
+    std::cout << std::left
+              << std::setw(15) << "Топливо" << "| "
+              << std::setw(15) << "Пассажиров" << "| "
+              << std::setw(15) << "Багажник" << "| " << std::endl;
 }
 
-// ===== Уникальная перегрузка ввода для Car =====
-std::istream& operator>>(std::istream& is, Car& car) {
-    std::cout << ">>> Enter data for Car <<<\n";
-    car.input_info(); // использует переопределённый input_info()
-    return is;
+void Car::print_table() const
+{
+    TransportVehicle::print_table();
+    std::cout << std::left
+              << std::setw(15) << fuelPrice << "| "
+              << std::setw(15) << passengerCapacity << "| "
+              << std::setw(15) << trunkVolume << "| " << std::endl;
 }

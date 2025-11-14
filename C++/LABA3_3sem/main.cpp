@@ -1,252 +1,354 @@
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <limits>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
-#include "TransportVehicle.h"
-#include "Car.h"
 #include "Bicycle.h"
+#include "Car.h"
 #include "Cart.h"
 
-using namespace std;
-
-const int MAX_OBJECTS = 10;
-TransportVehicle* objects[MAX_OBJECTS];
-int objectCount = 0;
-
-void clearInput() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
-
-void printMenu() {
-    const int width = 60;
-
-    cout << "\n " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
-
-    string title = "TRANSPORT VEHICLE MANAGEMENT SYSTEM";
-    int padding = (width - 2 - (int)title.length()) / 2;
-    cout << " |" << setw(padding) << " " << title
-         << setw(width - 2 - padding - (int)title.length()) << " " << "|" << endl;
-
-    cout << " " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
-
-    cout << " |  1. Add Transport Vehicle" << setw(width - 28) << " " << "|" << endl;
-    cout << " |  2. Show All" << setw(width - 15) << " " << "|" << endl;
-    cout << " |  3. Edit Transport Vehicle" << setw(width - 29) << " " << "|" << endl;
-    cout << " |  4. Delete Transport Vehicle" << setw(width - 31) << " " << "|" << endl;
-    cout << " |  5. Calculate Cost and Time" << setw(width - 30) << " " << "|" << endl;
-    cout << " |  0. Exit" << setw(width - 11) << " " << "|" << endl;
-
-    cout << " " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
-    cout << " Select option: ";
-}
-
-void addObject() {
-    if (objectCount >= MAX_OBJECTS) {
-        cout << "Cannot add more objects! Maximum reached.\n";
-        return;
+void base_menu_actions(TransportVehicle& vehicle, int choice)
+{
+    switch (choice)
+    {
+    case 1:
+        vehicle.print_header();
+        vehicle.print_table();
+        break;
+    case 2:
+    {
+        std::string name;
+        std::cout << "Введите новое название: ";
+        std::getline(std::cin >> std::ws, name);
+        vehicle.SetName(name);
+        break;
     }
+    case 3:
+    {
+        double distance;
+        std::cout << "Введите новое расстояние: ";
+        std::cin >> distance;
+        vehicle.SetDistance(distance);
+        break;
+    }
+    case 4:
+    {
+        double rate;
+        std::cout << "Введите новую стоимость за км для пассажиров: ";
+        std::cin >> rate;
+        vehicle.SetPassengerRate(rate);
+        break;
+    }
+    case 5:
+    {
+        double rate;
+        std::cout << "Введите новую стоимость за км для груза: ";
+        std::cin >> rate;
+        vehicle.SetCargoRate(rate);
+        break;
+    }
+    case 6:
+    {
+        double speed;
+        std::cout << "Введите новую скорость: ";
+        std::cin >> speed;
+        vehicle.SetSpeed(speed);
+        break;
+    }
+    case 7:
+        std::cout << "Название: " << vehicle.GetName() << std::endl;
+        break;
+    case 8:
+        std::cout << "Расстояние: " << vehicle.GetDistance() << std::endl;
+        break;
+    case 9:
+        std::cout << "Стоимость за км (пассажиры): " << vehicle.GetPassengerRate() << std::endl;
+        break;
+    case 10:
+        std::cout << "Стоимость за км (груз): " << vehicle.GetCargoRate() << std::endl;
+        break;
+    case 11:
+        std::cout << "Скорость: " << vehicle.GetSpeed() << std::endl;
+        break;
+    case 12:
+    {
+        int passengers;
+        std::cout << "Введите количество пассажиров: ";
+        std::cin >> passengers;
+        std::cout << "Стоимость перевозки пассажиров: "
+                  << vehicle.cost_passengers(passengers) << std::endl;
+        std::cout << "Время в пути: " << vehicle.time_in_path() << " ч" << std::endl;
+        break;
+    }
+    case 13:
+    {
+        double cargo;
+        std::cout << "Введите массу груза (кг): ";
+        std::cin >> cargo;
+        std::cout << "Стоимость перевозки груза: " << vehicle.cost_cargo(cargo) << std::endl;
+        std::cout << "Время в пути: " << vehicle.time_in_path() << " ч" << std::endl;
+        break;
+    }
+    default:
+        std::cout << "Неверный пункт!" << std::endl;
+        break;
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
 
-    cout << "Select vehicle type:\n";
-    cout << "1. Car\n";
-    cout << "2. Bicycle\n";
-    cout << "3. Cart\n";
-    cout << "Choice: ";
-    int type;
-    cin >> type;
-    clearInput();
-
-    TransportVehicle* newObject = nullptr;
-
-    switch (type) {
-        case 1:
-            newObject = new Car;
+void menu_car(Car& car)
+{
+    while (true)
+    {
+        car.menu();
+        std::cout << "Выберите пункт: ";
+        int choice;
+        if (!(std::cin >> choice))
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (choice == 0)
+        {
+            return;
+        }
+        if (choice >= 1 && choice <= 13)
+        {
+            base_menu_actions(car, choice);
+            continue;
+        }
+        switch (choice)
+        {
+        case 14:
+        {
+            double price;
+            std::cout << "Введите стоимость топлива: ";
+            std::cin >> price;
+            car.SetFuelPrice(price);
             break;
-        case 2:
-            newObject = new Bicycle;
+        }
+        case 15:
+            std::cout << "Стоимость топлива: " << car.GetFuelPrice() << std::endl;
             break;
-        case 3:
-            newObject = new Cart;
+        case 16:
+        {
+            int capacity;
+            std::cout << "Введите вместимость пассажиров: ";
+            std::cin >> capacity;
+            car.SetPassengerCapacity(capacity);
+            break;
+        }
+        case 17:
+            std::cout << "Вместимость пассажиров: " << car.GetPassengerCapacity() << std::endl;
+            break;
+        case 18:
+        {
+            double volume;
+            std::cout << "Введите объём багажника: ";
+            std::cin >> volume;
+            car.SetTrunkVolume(volume);
+            break;
+        }
+        case 19:
+            std::cout << "Объём багажника: " << car.GetTrunkVolume() << std::endl;
             break;
         default:
-            cout << "Invalid type selection.\n";
+            std::cout << "Неверный пункт!" << std::endl;
+            break;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+}
+
+void menu_bicycle(Bicycle& bicycle)
+{
+    while (true)
+    {
+        bicycle.menu();
+        std::cout << "Выберите пункт: ";
+        int choice;
+        if (!(std::cin >> choice))
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (choice == 0)
+        {
             return;
-    }
-
-    // Вызовется operator>> из базового класса,
-    // который дернёт виртуальную input_info(),
-    // а там уже свои "[Car] Input data:" / "[Bicycle] ..." и т.п.
-    cin >> *newObject;
-
-    objects[objectCount] = newObject;
-    objectCount++;
-    cout << "Transport Vehicle added successfully!\n";
-}
-
-void showAll() {
-    if (objectCount > 0) {
-        std::cout << "\nALL TRANSPORT VEHICLES\n";
-        objects[0]->printHeader();
-
-        for (int i = 0; i < objectCount; i++) {
-            std::cout << "| " << std::setw(2) << std::left << i + 1;
-            objects[i]->printTable();
         }
-
-        // Закрывающая линия таблицы
-        std::cout << "+----+------------+----------------------+------------+----------+--------------------+---------------+----------+\n";
-    } else {
-        std::cout << "\nNo Transport Vehicles found.\n";
+        if (choice >= 1 && choice <= 13)
+        {
+            base_menu_actions(bicycle, choice);
+            continue;
+        }
+        switch (choice)
+        {
+        case 14:
+        {
+            int gears;
+            std::cout << "Введите количество передач: ";
+            std::cin >> gears;
+            bicycle.SetGearCount(gears);
+            break;
+        }
+        case 15:
+            std::cout << "Передач: " << bicycle.GetGearCount() << std::endl;
+            break;
+        case 16:
+        {
+            int value;
+            std::cout << "Есть багажник? (1 - да, 0 - нет): ";
+            std::cin >> value;
+            bicycle.SetHasCargoRack(value != 0);
+            break;
+        }
+        case 17:
+            std::cout << "Наличие багажника: " << (bicycle.GetHasCargoRack() ? "Да" : "Нет") << std::endl;
+            break;
+        case 18:
+        {
+            double maxCargo;
+            std::cout << "Введите максимальный груз: ";
+            std::cin >> maxCargo;
+            bicycle.SetMaxCargo(maxCargo);
+            break;
+        }
+        case 19:
+            std::cout << "Максимальный груз: " << bicycle.GetMaxCargo() << std::endl;
+            break;
+        default:
+            std::cout << "Неверный пункт!" << std::endl;
+            break;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
-void editObject() {
-    if (objectCount == 0) {
-        cout << "No objects to edit.\n";
-        return;
+void menu_cart(Cart& cart)
+{
+    while (true)
+    {
+        cart.menu();
+        std::cout << "Выберите пункт: ";
+        int choice;
+        if (!(std::cin >> choice))
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (choice == 0)
+        {
+            return;
+        }
+        if (choice >= 1 && choice <= 13)
+        {
+            base_menu_actions(cart, choice);
+            continue;
+        }
+        switch (choice)
+        {
+        case 14:
+        {
+            int horses;
+            std::cout << "Введите количество лошадей: ";
+            std::cin >> horses;
+            cart.SetHorseCount(horses);
+            break;
+        }
+        case 15:
+            std::cout << "Количество лошадей: " << cart.GetHorseCount() << std::endl;
+            break;
+        case 16:
+        {
+            double rest;
+            std::cout << "Введите время отдыха: ";
+            std::cin >> rest;
+            cart.SetRestTime(rest);
+            break;
+        }
+        case 17:
+            std::cout << "Время отдыха: " << cart.GetRestTime() << std::endl;
+            break;
+        case 18:
+        {
+            double payload;
+            std::cout << "Введите грузоподъёмность: ";
+            std::cin >> payload;
+            cart.SetMaxPayload(payload);
+            break;
+        }
+        case 19:
+            std::cout << "Грузоподъёмность: " << cart.GetMaxPayload() << std::endl;
+            break;
+        default:
+            std::cout << "Неверный пункт!" << std::endl;
+            break;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (int i = 0; i < objectCount; i++) {
-        cout << i + 1 << ". " << *objects[i] << endl;
-    }
-
-    cout << "Select object to edit: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || index > objectCount) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    TransportVehicle& obj = *objects[index - 1];
-
-    cout << "Current data: " << obj << endl;
-    cout << "Enter new data:\n";
-    cin >> obj;
-
-    cout << "Object updated successfully!\n";
 }
 
-void deleteObject() {
-    if (objectCount == 0) {
-        cout << "No objects to delete.\n";
-        return;
-    }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (int i = 0; i < objectCount; i++) {
-        cout << i + 1 << ". " << *objects[i] << endl;
-    }
-
-    cout << "Select object to delete: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || index > objectCount) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    cout << "Deleting: " << *objects[index - 1] << endl;
-
-    delete objects[index - 1];
-
-    for (int i = index - 1; i < objectCount - 1; i++) {
-        objects[i] = objects[i + 1];
-    }
-    objectCount--;
-
-    cout << "Object deleted successfully!\n";
-}
-
-void calculateCosts() {
-    if (objectCount == 0) {
-        cout << "No objects to calculate.\n";
-        return;
-    }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (int i = 0; i < objectCount; i++) {
-        cout << i + 1 << ". " << *objects[i] << endl;
-    }
-
-    cout << "Select object for calculation: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || index > objectCount) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    TransportVehicle& obj = *objects[index - 1];
-
-    cout << "Enter number of passengers: ";
-    int passengers;
-    cin >> passengers;
-    clearInput();
-
-    cout << "Enter cargo weight (kg): ";
-    double cargo;
-    cin >> cargo;
-    clearInput();
-
-    cout << "\nCalculation Results:\n";
-    cout << "Passenger Transport:\n";
-    obj.input_info_passengers(passengers);
-    cout << "\nCargo Transport:\n";
-    obj.input_info_cargo(cargo);
-}
-
-int main() {
+int main()
+{
+#ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
-    int choice;
+#endif
+    setlocale(LC_ALL, "ru_RU.UTF-8");
 
-    do {
-        printMenu();
-        cin >> choice;
-        clearInput();
+    Car car;
+    Bicycle bicycle;
+    Cart cart;
 
-        switch (choice) {
-            case 1:
-                addObject();
-                break;
-            case 2:
-                showAll();
-                break;
-            case 3:
-                editObject();
-                break;
-            case 4:
-                deleteObject();
-                break;
-            case 5:
-                calculateCosts();
-                break;
-            case 0:
-                cout << "Goodbye!\n";
-                break;
-            default:
-                cout << "Invalid option!\n";
-        }
+    std::cout << "Введите данные для автомобиля" << std::endl;
+    std::cin >> car;
+    std::cout << "\nВведите данные для велосипеда" << std::endl;
+    std::cin >> bicycle;
+    std::cout << "\nВведите данные для повозки" << std::endl;
+    std::cin >> cart;
 
-        if (choice != 0) {
-            cout << "\nPress Enter to continue...";
-            cin.get();
-        }
+    std::cout << "\n=== Автомобиль ===" << std::endl;
+    car.print_header();
+    car.print_table();
+    std::cout << "\n=== Велосипед ===" << std::endl;
+    bicycle.print_header();
+    bicycle.print_table();
+    std::cout << "\n=== Повозка ===" << std::endl;
+    cart.print_header();
+    cart.print_table();
 
-    } while (choice != 0);
+    int passengers;
+    double cargoWeight;
+    std::cout << "\nВведите количество пассажиров для расчёта: ";
+    std::cin >> passengers;
+    std::cout << "Введите массу груза (кг) для расчёта: ";
+    std::cin >> cargoWeight;
 
-    // Очистка
-    for (int i = 0; i < objectCount; i++) {
-        delete objects[i];
-    }
+    auto show_results = [&](const std::string& title, TransportVehicle& vehicle)
+    {
+        std::cout << title << " - время: " << vehicle.time_in_path()
+                  << " ч, стоимость пассажиров: " << vehicle.cost_passengers(passengers)
+                  << " руб, стоимость груза: " << vehicle.cost_cargo(cargoWeight) << " руб" << std::endl;
+    };
+
+    std::cout << "\n=== Расчёт перевозок ===" << std::endl;
+    show_results("Автомобиль", car);
+    show_results("Велосипед", bicycle);
+    show_results("Повозка", cart);
+
+    std::cout << "\n=== Меню автомобиля ===" << std::endl;
+    menu_car(car);
+    std::cout << "\n=== Меню велосипеда ===" << std::endl;
+    menu_bicycle(bicycle);
+    std::cout << "\n=== Меню повозки ===" << std::endl;
+    menu_cart(cart);
 
     return 0;
 }

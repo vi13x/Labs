@@ -1,61 +1,153 @@
 #include "Cart.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Cart::Cart(const std::string &name,
-           double distanceKm,
-           double speedKmh,
-           double passengerRatePerKm,
-           double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Cart::Cart() = default;
 
-TransportVehicle* Cart::clone() const {
-    return new Cart(*this);
+Cart::Cart(int HorseCount,
+           double RestTime,
+           double MaxPayload,
+           const std::string& Name,
+           double Distance,
+           double PassengerRate,
+           double CargoRate,
+           double Speed)
+    : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed)
+{
+    horseCount = HorseCount;
+    restTime = RestTime;
+    maxPayload = MaxPayload;
 }
 
-std::string Cart::type_name() const {
-    return "Cart";
+Cart::Cart(const Cart& other) = default;
+
+Cart::~Cart() = default;
+
+double Cart::time_in_path() const
+{
+    double base = TransportVehicle::time_in_path();
+    return base + restTime;
 }
 
-void Cart::input_info() {
-    std::cout << "[Cart] Input data:\n";
-    TransportVehicle::input_info();
+double Cart::cost_cargo(double cargoWeight) const
+{
+    if (cargoWeight > maxPayload)
+    {
+        std::cout << "Превышена грузоподъёмность!" << std::endl;
+        return 0.0;
+    }
+    return TransportVehicle::cost_cargo(cargoWeight);
 }
 
-void Cart::printHeader() {
-    TransportVehicle::printHeader();
+void Cart::menu()
+{
+    TransportVehicle::menu();
+    std::cout << "14. Изменить количество лошадей" << std::endl;
+    std::cout << "15. Получить количество лошадей" << std::endl;
+    std::cout << "16. Изменить время отдыха" << std::endl;
+    std::cout << "17. Получить время отдыха" << std::endl;
+    std::cout << "18. Изменить грузоподъёмность" << std::endl;
+    std::cout << "19. Получить грузоподъёмность" << std::endl;
 }
 
-void Cart::printTable() {
-    TransportVehicle::printTable();
+int Cart::GetHorseCount() const
+{
+    return horseCount;
 }
 
-void Cart::display(int index) {
-    TransportVehicle::display(index);
+double Cart::GetRestTime() const
+{
+    return restTime;
 }
 
-// ===== Уникальный оператор присваивания =====
-Cart& Cart::operator=(const Cart& other) {
-    if (this != &other) {
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
+double Cart::GetMaxPayload() const
+{
+    return maxPayload;
+}
+
+void Cart::SetHorseCount(int HorseCount)
+{
+    if (HorseCount > 0)
+    {
+        horseCount = HorseCount;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+void Cart::SetRestTime(double RestTime)
+{
+    if (RestTime >= 0)
+    {
+        restTime = RestTime;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+void Cart::SetMaxPayload(double MaxPayload)
+{
+    if (MaxPayload >= 0)
+    {
+        maxPayload = MaxPayload;
+    }
+    else
+    {
+        std::cout << "Ошибка!" << std::endl;
+    }
+}
+
+std::istream& operator>>(std::istream& is, Cart& cart)
+{
+    is >> static_cast<TransportVehicle&>(cart);
+    std::cout << "Введите количество лошадей: ";
+    is >> cart.horseCount;
+    std::cout << "Введите дополнительное время отдыха (ч): ";
+    is >> cart.restTime;
+    std::cout << "Введите грузоподъёмность (кг): ";
+    is >> cart.maxPayload;
+    is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Cart& cart)
+{
+    os << static_cast<TransportVehicle&>(cart);
+    os << std::setw(15) << cart.horseCount << "| "
+       << std::setw(15) << cart.restTime << "| "
+       << std::setw(15) << cart.maxPayload << "| ";
+    return os;
+}
+
+Cart& Cart::operator=(const Cart& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+        horseCount = other.horseCount;
+        restTime = other.restTime;
+        maxPayload = other.maxPayload;
     }
     return *this;
 }
 
-// ===== Уникальная перегрузка вывода =====
-std::ostream& operator<<(std::ostream& os, const Cart& cart) {
-    os << "[Cart object] ";
-    os << static_cast<const TransportVehicle&>(cart);
-    return os;
+void Cart::print_header() const
+{
+    TransportVehicle::print_header();
+    std::cout << std::left
+              << std::setw(15) << "Лошадей" << "| "
+              << std::setw(15) << "Отдых (ч)" << "| "
+              << std::setw(15) << "Макс. груз" << "| " << std::endl;
 }
 
-// ===== Уникальная перегрузка ввода =====
-std::istream& operator>>(std::istream& is, Cart& cart) {
-    std::cout << ">>> Enter data for Cart <<<\n";
-    cart.input_info();
-    return is;
+void Cart::print_table() const
+{
+    TransportVehicle::print_table();
+    std::cout << std::left
+              << std::setw(15) << horseCount << "| "
+              << std::setw(15) << restTime << "| "
+              << std::setw(15) << maxPayload << "| " << std::endl;
 }

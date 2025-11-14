@@ -1,4 +1,5 @@
 #include "Car.h"
+#include <iomanip>
 #include <limits>
 
 Car::Car() = default;
@@ -21,6 +22,35 @@ Car::Car(double FuelPrice,
 Car::Car(const Car& other) = default;
 
 Car::~Car() = default;
+
+void Car::menu()
+{
+    TransportVehicle::menu();
+    std::cout << "10. Изменить стоимость топлива" << std::endl;
+    std::cout << "11. Получить стоимость топлива" << std::endl;
+    std::cout << "12. Изменить пассажирскую вместимость" << std::endl;
+    std::cout << "13. Получить пассажирскую вместимость" << std::endl;
+    std::cout << "14. Изменить объём багажника" << std::endl;
+    std::cout << "15. Получить объём багажника" << std::endl;
+}
+
+void Car::print_header() const
+{
+    TransportVehicle::print_header();
+    std::cout << std::left
+              << std::setw(15) << "Топливо" << "| "
+              << std::setw(15) << "Пассажиров" << "| "
+              << std::setw(16) << "Багажник" << "| " << std::endl;
+}
+
+void Car::print_table() const
+{
+    TransportVehicle::print_table();
+    std::cout << std::left
+              << std::setw(15) << fuelPrice << "| "
+              << std::setw(15) << passengerCapacity << "| "
+              << std::setw(16) << trunkVolume << "| ";
+}
 
 double Car::time_in_path() const
 {
@@ -102,10 +132,7 @@ std::istream& operator>>(std::istream& is, Car& car)
 
 std::ostream& operator<<(std::ostream& os, const Car& car)
 {
-    os << static_cast<const TransportVehicle&>(car)
-       << ", топливо: " << car.fuelPrice
-       << ", мест: " << car.passengerCapacity
-       << ", багажник: " << car.trunkVolume << " л";
+    car.print_table();
     return os;
 }
 

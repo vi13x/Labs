@@ -17,6 +17,41 @@ TransportVehicle::TransportVehicle(const TransportVehicle& other) = default;
 
 TransportVehicle::~TransportVehicle() = default;
 
+void TransportVehicle::menu()
+{
+    std::cout << "=============МЕНЮ============" << std::endl;
+    std::cout << "0. Выйти" << std::endl;
+    std::cout << "1. Вывести объект" << std::endl;
+    std::cout << "2. Изменить название" << std::endl;
+    std::cout << "3. Изменить расстояние" << std::endl;
+    std::cout << "4. Изменить тариф для пассажиров" << std::endl;
+    std::cout << "5. Изменить тариф для груза" << std::endl;
+    std::cout << "6. Изменить скорость" << std::endl;
+    std::cout << "7. Получить название" << std::endl;
+    std::cout << "8. Получить расстояние" << std::endl;
+    std::cout << "9. Получить скорость" << std::endl;
+}
+
+void TransportVehicle::print_header() const
+{
+    std::cout << std::left
+              << std::setw(15) << "Название" << "| "
+              << std::setw(15) << "Расстояние" << "| "
+              << std::setw(15) << "Скорость" << "| "
+              << std::setw(15) << "Тариф пасс" << "| "
+              << std::setw(15) << "Тариф груз" << "| ";
+}
+
+void TransportVehicle::print_table() const
+{
+    std::cout << std::left
+              << std::setw(15) << name << "| "
+              << std::setw(15) << distance << "| "
+              << std::setw(15) << speed << "| "
+              << std::setw(15) << passengerRate << "| "
+              << std::setw(15) << cargoRate << "| ";
+}
+
 double TransportVehicle::time_in_path() const
 {
     if (speed <= 0)
@@ -142,11 +177,7 @@ std::istream& operator>>(std::istream& is, TransportVehicle& vehicle)
 
 std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle)
 {
-    os << "Транспорт: " << vehicle.name
-       << ", расстояние: " << vehicle.distance << " км"
-       << ", скорость: " << vehicle.speed << " км/ч"
-       << ", тариф пассажиры: " << vehicle.passengerRate
-       << ", тариф груз: " << vehicle.cargoRate;
+    vehicle.print_table();
     return os;
 }
 

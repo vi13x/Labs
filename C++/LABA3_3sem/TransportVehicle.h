@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <string>
 
@@ -22,7 +23,11 @@ public:
     TransportVehicle(const TransportVehicle& other);
     virtual ~TransportVehicle();
 
-    virtual double time_in_path() const;              // Расчёт времени в пути
+    virtual void menu();
+    virtual void print_header() const;
+    virtual void print_table() const;
+
+    virtual double time_in_path() const;                  // Расчёт времени в пути
     virtual double cost_passengers(int passengers) const; // Стоимость перевозки пассажиров
     virtual double cost_cargo(double cargoWeight) const;  // Стоимость перевозки груза
 

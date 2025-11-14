@@ -1,4 +1,5 @@
 #include "Bicycle.h"
+#include <iomanip>
 #include <limits>
 
 Bicycle::Bicycle() = default;
@@ -21,6 +22,35 @@ Bicycle::Bicycle(int GearCount,
 Bicycle::Bicycle(const Bicycle& other) = default;
 
 Bicycle::~Bicycle() = default;
+
+void Bicycle::menu()
+{
+    TransportVehicle::menu();
+    std::cout << "22. Изменить количество передач" << std::endl;
+    std::cout << "23. Получить количество передач" << std::endl;
+    std::cout << "24. Изменить наличие багажника" << std::endl;
+    std::cout << "25. Получить наличие багажника" << std::endl;
+    std::cout << "26. Изменить максимальный груз" << std::endl;
+    std::cout << "27. Получить максимальный груз" << std::endl;
+}
+
+void Bicycle::print_header() const
+{
+    TransportVehicle::print_header();
+    std::cout << std::left
+              << std::setw(15) << "Передач" << "| "
+              << std::setw(15) << "Багажник" << "| "
+              << std::setw(16) << "Макс. груз" << "| " << std::endl;
+}
+
+void Bicycle::print_table() const
+{
+    TransportVehicle::print_table();
+    std::cout << std::left
+              << std::setw(15) << gearCount << "| "
+              << std::setw(15) << (hasCargoRack ? "есть" : "нет") << "| "
+              << std::setw(16) << maxCargo << "| ";
+}
 
 double Bicycle::time_in_path() const
 {
@@ -99,10 +129,7 @@ std::istream& operator>>(std::istream& is, Bicycle& bicycle)
 
 std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle)
 {
-    os << static_cast<const TransportVehicle&>(bicycle)
-       << ", передач: " << bicycle.gearCount
-       << ", багажник: " << (bicycle.hasCargoRack ? "есть" : "нет")
-       << ", макс. груз: " << bicycle.maxCargo << " кг";
+    bicycle.print_table();
     return os;
 }
 

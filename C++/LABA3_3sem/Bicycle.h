@@ -22,6 +22,10 @@ public:
     Bicycle(const Bicycle& other);
     ~Bicycle() override;
 
+    void menu() override;
+    void print_header() const override;
+    void print_table() const override;
+
     double time_in_path() const override;
     double cost_cargo(double cargoWeight) const override;
     int GetGearCount() const;

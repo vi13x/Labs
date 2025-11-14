@@ -1,4 +1,5 @@
 #include "Cart.h"
+#include <iomanip>
 #include <limits>
 
 Cart::Cart() = default;
@@ -21,6 +22,35 @@ Cart::Cart(int HorseCount,
 Cart::Cart(const Cart& other) = default;
 
 Cart::~Cart() = default;
+
+void Cart::menu()
+{
+    TransportVehicle::menu();
+    std::cout << "16. Изменить количество лошадей" << std::endl;
+    std::cout << "17. Получить количество лошадей" << std::endl;
+    std::cout << "18. Изменить время отдыха" << std::endl;
+    std::cout << "19. Получить время отдыха" << std::endl;
+    std::cout << "20. Изменить грузоподъёмность" << std::endl;
+    std::cout << "21. Получить грузоподъёмность" << std::endl;
+}
+
+void Cart::print_header() const
+{
+    TransportVehicle::print_header();
+    std::cout << std::left
+              << std::setw(15) << "Лошадей" << "| "
+              << std::setw(15) << "Отдых" << "| "
+              << std::setw(16) << "Грузоподъёмн" << "| " << std::endl;
+}
+
+void Cart::print_table() const
+{
+    TransportVehicle::print_table();
+    std::cout << std::left
+              << std::setw(15) << horseCount << "| "
+              << std::setw(15) << restTime << "| "
+              << std::setw(16) << maxPayload << "| ";
+}
 
 double Cart::time_in_path() const
 {
@@ -105,10 +135,7 @@ std::istream& operator>>(std::istream& is, Cart& cart)
 
 std::ostream& operator<<(std::ostream& os, const Cart& cart)
 {
-    os << static_cast<const TransportVehicle&>(cart)
-       << ", лошадей: " << cart.horseCount
-       << ", отдых: " << cart.restTime << " ч"
-       << ", грузоподъёмность: " << cart.maxPayload << " кг";
+    cart.print_table();
     return os;
 }
 

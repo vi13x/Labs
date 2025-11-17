@@ -55,13 +55,13 @@ double TransportVehicle::cost_cargo(double weightKg) const
 void TransportVehicle::print_header() const
 {
     std::cout << std::left
-              << std::setw(20) << "Тип"            << "| "
-              << std::setw(20) << "Название"       << "| "
-              << std::setw(12) << "Дистанция"      << "| "
-              << std::setw(12) << "Скорость"       << "| "
-              << std::setw(18) << "Цена/км пасс"   << "| "
-              << std::setw(18) << "Цена/км кг"     << "| "
-              << std::setw(12) << "Время"          << "| " << std::endl;
+              << std::setw(13) << "Тип"            << "| "
+              << std::setw(28) << "Название"       << "| "
+              << std::setw(17) << "Дистанция   "      << "| "
+              << std::setw(12) << "Скорость    "       << "| "
+              << std::setw(18) << "Цена/км пасс      "   << "| "
+              << std::setw(18) << "Цена/км кг        "     << "| "
+              << std::setw(12) << "Время"          << "     | " << std::endl;
 }
 
 void TransportVehicle::print_table() const
@@ -69,7 +69,7 @@ void TransportVehicle::print_table() const
     std::cout << std::left
               << std::setw(20) << "Транспорт"      << "| "
               << std::setw(20) << name             << "| "
-              << std::setw(12) << distance         << "| "
+              << std::setw(10) << distance         << "| "
               << std::setw(12) << speed            << "| "
               << std::setw(18) << passengerRatePerKm << "| "
               << std::setw(18) << cargoRatePerKmPerKg << "| "

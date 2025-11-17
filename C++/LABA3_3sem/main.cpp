@@ -133,7 +133,7 @@ int main()
     cout << "Сколько автомобилей создать? (минимум 2): ";
     cin >> carCount;
 
-    while (carCount < 2)
+    while (carCount < 1)
     {
         cout << "ОШИБКА! Автомобилей должно быть минимум 2.\nПовторите ввод: ";
         cin >> carCount;

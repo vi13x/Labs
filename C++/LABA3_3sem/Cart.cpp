@@ -22,7 +22,7 @@ void Cart::print_header() const
 void Cart::print_table() const
 {
     std::cout << std::left
-              << std::setw(20) << "Повозка"        << "| "
+              << std::setw(17) << "Повозка"        << "| "
               << std::setw(20) << name             << "| "
               << std::setw(12) << distance         << "| "
               << std::setw(12) << speed            << "| "

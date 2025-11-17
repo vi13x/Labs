@@ -55,25 +55,25 @@ double TransportVehicle::cost_cargo(double weightKg) const
 void TransportVehicle::print_header() const
 {
     std::cout << std::left
-              << std::setw(15) << "Тип"         << "| "
-              << std::setw(15) << "Название"    << "| "
-              << std::setw(10) << "Дистанция"   << "| "
-              << std::setw(10) << "Скорость"    << "| "
-              << std::setw(15) << "Цена/км пасс" << "| "
-              << std::setw(15) << "Цена/км кг"  << "| "
-              << std::setw(10) << "Время"       << "| " << std::endl;
+              << std::setw(20) << "Тип"            << "| "
+              << std::setw(20) << "Название"       << "| "
+              << std::setw(12) << "Дистанция"      << "| "
+              << std::setw(12) << "Скорость"       << "| "
+              << std::setw(18) << "Цена/км пасс"   << "| "
+              << std::setw(18) << "Цена/км кг"     << "| "
+              << std::setw(12) << "Время"          << "| " << std::endl;
 }
 
 void TransportVehicle::print_table() const
 {
     std::cout << std::left
-              << std::setw(15) << "Транспорт"   << "| "
-              << std::setw(15) << name          << "| "
-              << std::setw(10) << distance      << "| "
-              << std::setw(10) << speed         << "| "
-              << std::setw(15) << passengerRatePerKm << "| "
-              << std::setw(15) << cargoRatePerKmPerKg << "| "
-              << std::setw(10) << time_in_path() << "| " << std::endl;
+              << std::setw(20) << "Транспорт"      << "| "
+              << std::setw(20) << name             << "| "
+              << std::setw(12) << distance         << "| "
+              << std::setw(12) << speed            << "| "
+              << std::setw(18) << passengerRatePerKm << "| "
+              << std::setw(18) << cargoRatePerKmPerKg << "| "
+              << std::setw(12) << time_in_path()   << "| " << std::endl;
 }
 
 void TransportVehicle::menu() const
@@ -162,13 +162,13 @@ std::istream& operator>>(std::istream& is, TransportVehicle& ob)
 std::ostream& operator<<(std::ostream& os, TransportVehicle& ob)
 {
     os << std::left
-       << std::setw(15) << "Транспорт"    << "| "
-       << std::setw(15) << ob.name        << "| "
-       << std::setw(10) << ob.distance    << "| "
-       << std::setw(10) << ob.speed       << "| "
-       << std::setw(15) << ob.passengerRatePerKm << "| "
-       << std::setw(15) << ob.cargoRatePerKmPerKg << "| "
-       << std::setw(10) << ob.time_in_path() << "| ";
+       << std::setw(20) << "Транспорт"       << "| "
+       << std::setw(20) << ob.name           << "| "
+       << std::setw(12) << ob.distance       << "| "
+       << std::setw(12) << ob.speed          << "| "
+       << std::setw(18) << ob.passengerRatePerKm << "| "
+       << std::setw(18) << ob.cargoRatePerKmPerKg << "| "
+       << std::setw(12) << ob.time_in_path() << "| ";
     return os;
 }
 

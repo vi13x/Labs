@@ -1,215 +1,247 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include <string>
-#include <vector>
-#include <clocale>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-#include "TransportVehicle.h"
 #include "Car.h"
 #include "Bicycle.h"
 #include "Cart.h"
+#include <windows.h>
 
 using namespace std;
 
-namespace {
-const char* TABLE_FOOTER =
-    "+----+------------+----------------------+------------+----------+--------------------+---------------+---------+\n";
-
-void printVehiclesTable(const vector<TransportVehicle*>& vehicles) {
-    if (vehicles.empty()) {
-        cout << "Нет объектов для отображения." << endl;
-        return;
-    }
-
-    vehicles.front()->printHeader();
-    for (size_t i = 0; i < vehicles.size(); ++i) {
-        cout << "| " << setw(2) << left << i + 1;
-        vehicles[i]->printTable();
-    }
-    cout << TABLE_FOOTER;
-}
-
-void printSingleVehicle(TransportVehicle& vehicle) {
-    vector<TransportVehicle*> single{ &vehicle };
-    printVehiclesTable(single);
-}
-
-void menu_vehicle(TransportVehicle& vehicle) {
-    while (true) {
-        cout << "\n=============МЕНЮ============" << endl;
-        cout << "0. Выйти" << endl;
-        cout << "1. Вывести объект" << endl;
-        cout << "2. Изменить название" << endl;
-        cout << "3. Изменить расстояние" << endl;
-        cout << "4. Изменить скорость" << endl;
-        cout << "5. Изменить стоимость за км (пассажиры)" << endl;
-        cout << "6. Изменить стоимость за км (груз)" << endl;
-        cout << "7. Получить название" << endl;
-        cout << "8. Получить расстояние" << endl;
-        cout << "9. Получить скорость" << endl;
-        cout << "10. Получить стоимость за км (пассажиры)" << endl;
-        cout << "11. Получить стоимость за км (груз)" << endl;
-        cout << "12. Расчет пассажирской перевозки" << endl;
-        cout << "13. Расчет грузовой перевозки" << endl;
-        cout << "Выбор: ";
-
+void menu_vehicle(TransportVehicle& t)
+{
+    while (true)
+    {
+        t.menu();
         int choice;
-        if (!(cin >> choice)) {
-            return;
-        }
+        cin >> choice;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        switch (choice) {
+        switch (choice)
+        {
             case 0:
                 return;
+
             case 1:
-                printSingleVehicle(vehicle);
+                cout << "\nТЕКУЩИЕ ДАННЫЕ:\n";
+                t.print_header();
+                t.print_table();
                 cout << endl;
                 break;
-            case 2: {
+
+            case 2:
+            {
+                string n;
                 cout << "Введите новое название: ";
-                string newName;
-                getline(cin, newName);
-                vehicle.set_name(newName);
-                cout << "Название обновлено." << endl;
+                getline(cin, n);
+                t.SetName(n);
+                cout << endl;
                 break;
             }
-            case 3: {
-                cout << "Введите новое расстояние (км): ";
-                double value;
-                cin >> value;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.set_distance_km(value);
-                cout << "Расстояние обновлено." << endl;
+
+            case 3:
+            {
+                double d;
+                cout << "Введите новое расстояние: ";
+                cin >> d;
+                t.SetDistance(d);
+                cout << endl;
                 break;
             }
-            case 4: {
-                cout << "Введите новую скорость (км/ч): ";
-                double value;
-                cin >> value;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.set_speed_kmh(value);
-                cout << "Скорость обновлена." << endl;
+
+            case 4:
+            {
+                double p;
+                cout << "Введите новую цену за км (пассажиры): ";
+                cin >> p;
+                t.SetPassengerRate(p);
+                cout << endl;
                 break;
             }
-            case 5: {
-                cout << "Введите новую стоимость за км для пассажиров: ";
-                double value;
-                cin >> value;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.set_passenger_rate_per_km(value);
-                cout << "Стоимость обновлена." << endl;
+
+            case 5:
+            {
+                double c;
+                cout << "Введите новую цену за км груза (кг): ";
+                cin >> c;
+                t.SetCargoRate(c);
+                cout << endl;
                 break;
             }
-            case 6: {
-                cout << "Введите новую стоимость за км для груза: ";
-                double value;
-                cin >> value;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.set_cargo_rate_per_km_per_kg(value);
-                cout << "Стоимость обновлена." << endl;
+
+            case 6:
+            {
+                double v;
+                cout << "Введите новую скорость: ";
+                cin >> v;
+                t.SetSpeed(v);
+                cout << endl;
                 break;
             }
+
             case 7:
-                cout << "Название: " << vehicle.get_name() << endl;
+                cout << "Название: " << t.GetName() << endl << endl;
                 break;
+
             case 8:
-                cout << "Расстояние (км): " << vehicle.get_distance_km() << endl;
+                cout << "Расстояние: " << t.GetDistance() << endl << endl;
                 break;
+
             case 9:
-                cout << "Скорость (км/ч): " << vehicle.get_speed_kmh() << endl;
+                cout << "Цена/км пассажиров: " << t.GetPassengerRate() << endl << endl;
                 break;
+
             case 10:
-                cout << "Стоимость за км (пассажиры): " << vehicle.get_passenger_rate_per_km() << endl;
+                cout << "Цена/км груза: " << t.GetCargoRate() << endl << endl;
                 break;
+
             case 11:
-                cout << "Стоимость за км (груз): " << vehicle.get_cargo_rate_per_km_per_kg() << endl;
+                cout << "Скорость: " << t.GetSpeed() << endl << endl;
                 break;
-            case 12: {
+
+            case 12:
+            {
+                int people;
                 cout << "Введите количество пассажиров: ";
-                int passengers;
-                cin >> passengers;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.input_info_passengers(passengers);
+                cin >> people;
+                cout << "Стоимость: " << t.cost_passengers(people) << endl;
+                cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
                 break;
             }
-            case 13: {
-                cout << "Введите вес груза (кг): ";
-                double cargoWeight;
-                cin >> cargoWeight;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                vehicle.input_info_cargo(cargoWeight);
+
+            case 13:
+            {
+                double kg;
+                cout << "Введите массу груза (кг): ";
+                cin >> kg;
+                cout << "Стоимость: " << t.cost_cargo(kg) << endl;
+                cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
                 break;
             }
-            default:
-                cout << "Неверный пункт меню." << endl;
-                break;
         }
     }
 }
 
-template <typename T>
-void inputVehicle(T& vehicle, const string& prompt) {
-    cout << prompt << endl;
-    cin >> vehicle;
-    cout << endl;
-}
-}
-
-int main() {
-#ifdef _WIN32
+int main()
+{
     SetConsoleOutputCP(CP_UTF8);
-#endif
-    setlocale(LC_ALL, "ru_RU.UTF-8");
+    // ===========================
+    //   ВВОД КОЛИЧЕСТВА ОБЪЕКТОВ
+    // ===========================
 
-    Car car;
-    Bicycle bicycle;
-    Cart cart;
+    int carCount;
+    cout << "Сколько автомобилей создать? (минимум 2): ";
+    cin >> carCount;
 
-    inputVehicle(car, "Введите данные для автомобиля:");
-    inputVehicle(bicycle, "Введите данные для велосипеда:");
-    inputVehicle(cart, "Введите данные для повозки:");
-
-    vector<TransportVehicle*> vehicles{ &car, &bicycle, &cart };
-
-    cout << setw(70) << "=== ТРАНСПОРТНЫЕ СРЕДСТВА ===" << endl;
-    printVehiclesTable(vehicles);
-
-    cout << endl << "=== ПРОВЕРКА ПЕРЕГРУЗОК ВЫВОДА ===" << endl;
-    cout << car << endl;
-    cout << bicycle << endl;
-    cout << cart << endl;
-
-    cout << endl << "=== РАСЧЕТ ВРЕМЕНИ И СТОИМОСТИ ===" << endl;
-    cout << "Введите количество пассажиров для расчета: ";
-    int passengers = 0;
-    cin >> passengers;
-    cout << "Введите вес груза (кг) для расчета: ";
-    double cargoWeight = 0.0;
-    cin >> cargoWeight;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout << endl;
-
-    for (TransportVehicle* vehicle : vehicles) {
-        ios::fmtflags oldFlags = cout.flags();
-        streamsize oldPrecision = cout.precision();
-
-        cout << vehicle->type_name() << " \"" << vehicle->get_name() << "\" - время: "
-             << fixed << setprecision(2) << vehicle->time_in_path_hours()
-             << " ч, стоимость (пассажиры): " << vehicle->cost_passengers(passengers)
-             << " руб, стоимость (груз): " << vehicle->cost_cargo(cargoWeight) << " руб" << endl;
-
-        cout.flags(oldFlags);
-        cout.precision(oldPrecision);
+    while (carCount < 2)
+    {
+        cout << "ОШИБКА! Автомобилей должно быть минимум 2.\nПовторите ввод: ";
+        cin >> carCount;
     }
 
-    cout << endl << "=== МЕНЮ УПРАВЛЕНИЯ ДЛЯ " << cart.type_name() << " ===" << endl;
-    menu_vehicle(cart);
+    int bicycleCount;
+    cout << "Сколько велосипедов создать? ";
+    cin >> bicycleCount;
 
-    cout << "Работа программы завершена." << endl;
+    int cartCount;
+    cout << "Сколько повозок создать? ";
+    cin >> cartCount;
+
+    // ===========================
+    //   ДИНАМИЧЕСКИЕ МАССИВЫ
+    // ===========================
+
+    Car* cars = new Car[carCount];
+    Bicycle* bicycles = new Bicycle[bicycleCount];
+    Cart* carts = new Cart[cartCount];
+
+    // ===========================
+    //   ВВОД ДАННЫХ
+    // ===========================
+
+    for (int i = 0; i < carCount; i++)
+    {
+        cout << "\nВведите данные автомобиля #" << i + 1 << ":\n";
+        cin >> cars[i];
+    }
+
+    for (int i = 0; i < bicycleCount; i++)
+    {
+        cout << "\nВведите данные велосипеда #" << i + 1 << ":\n";
+        cin >> bicycles[i];
+    }
+
+    for (int i = 0; i < cartCount; i++)
+    {
+        cout << "\nВведите данные повозки #" << i + 1 << ":\n";
+        cin >> carts[i];
+    }
+
+    // ===========================
+    //   ВЫВОД ТАБЛИЦЫ
+    // ===========================
+
+    cout << "\n\n===== ВСЕ ТРАНСПОРТЫ =====\n";
+    cars[0].print_header();
+
+    for (int i = 0; i < carCount; i++)
+        cars[i].print_table();
+
+    for (int i = 0; i < bicycleCount; i++)
+        bicycles[i].print_table();
+
+    for (int i = 0; i < cartCount; i++)
+        carts[i].print_table();
+
+    // ===========================
+    //   ВЫБОР ТРАНСПОРТА
+    // ===========================
+
+    cout << "\nВыберите тип транспорта для редактирования:\n";
+    cout << "1 — Автомобили\n2 — Велосипеды\n3 — Повозки\n0 — Выход\n";
+    int type;
+    cin >> type;
+
+    if (type == 0)
+    {
+        delete[] cars;
+        delete[] bicycles;
+        delete[] carts;
+        return 0;
+    }
+
+    int index;
+    switch (type)
+    {
+        case 1:
+            cout << "Выберите автомобиль (1-" << carCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= carCount)
+                menu_vehicle(cars[index - 1]);
+            break;
+
+        case 2:
+            cout << "Выберите велосипед (1-" << bicycleCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= bicycleCount)
+                menu_vehicle(bicycles[index - 1]);
+            break;
+
+        case 3:
+            cout << "Выберите повозку (1-" << cartCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= cartCount)
+                menu_vehicle(carts[index - 1]);
+            break;
+    }
+
+    // ===========================
+    //   ОСВОБОЖДЕНИЕ ПАМЯТИ
+    // ===========================
+
+    delete[] cars;
+    delete[] bicycles;
+    delete[] carts;
+
     return 0;
 }

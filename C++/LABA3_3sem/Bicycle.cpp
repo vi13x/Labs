@@ -1,61 +1,59 @@
 #include "Bicycle.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Bicycle::Bicycle(const std::string &name,
-                 double distanceKm,
-                 double speedKmh,
-                 double passengerRatePerKm,
-                 double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Bicycle::Bicycle() : TransportVehicle() {}
 
-TransportVehicle* Bicycle::clone() const {
-    return new Bicycle(*this);
+Bicycle::Bicycle(const std::string& Name,
+                 double Distance,
+                 double PassengerRate,
+                 double CargoRate,
+                 double Speed)
+        : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed) {}
+
+Bicycle::Bicycle(const Bicycle& other) : TransportVehicle(other) {}
+
+Bicycle::~Bicycle() = default;
+
+void Bicycle::print_header() const
+{
+    TransportVehicle::print_header();
 }
 
-std::string Bicycle::type_name() const {
-    return "Bicycle";
+void Bicycle::print_table() const
+{
+    std::cout << std::left
+              << std::setw(15) << "Велосипед"   << "| "
+              << std::setw(15) << name          << "| "
+              << std::setw(10) << distance      << "| "
+              << std::setw(10) << speed         << "| "
+              << std::setw(15) << passengerRatePerKm << "| "
+              << std::setw(15) << cargoRatePerKmPerKg << "| "
+              << std::setw(10) << time_in_path() << "| " << std::endl;
 }
 
-void Bicycle::input_info() {
-    std::cout << "[Bicycle] Input data:\n";
-    TransportVehicle::input_info();
+void Bicycle::menu() const
+{
+    std::cout << "\n=== МЕНЮ ВЕЛОСИПЕДА ===\n";
+    TransportVehicle::menu();
 }
 
-void Bicycle::printHeader() {
-    TransportVehicle::printHeader();
+std::istream& operator>>(std::istream& is, Bicycle& ob)
+{
+    is >> static_cast<TransportVehicle&>(ob);
+    return is;
 }
 
-void Bicycle::printTable() {
-    TransportVehicle::printTable();
-}
-
-void Bicycle::display(int index) {
-    TransportVehicle::display(index);
-}
-
-// ===== Уникальный оператор присваивания =====
-Bicycle& Bicycle::operator=(const Bicycle& other) {
-    if (this != &other) {
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
-    }
-    return *this;
-}
-
-// ===== Уникальная перегрузка вывода =====
-std::ostream& operator<<(std::ostream& os, const Bicycle& bicycle) {
-    os << "[Bicycle object] ";
-    os << static_cast<const TransportVehicle&>(bicycle);
+std::ostream& operator<<(std::ostream& os, Bicycle& ob)
+{
+    os << static_cast<TransportVehicle&>(ob);
     return os;
 }
 
-// ===== Уникальная перегрузка ввода =====
-std::istream& operator>>(std::istream& is, Bicycle& bicycle) {
-    std::cout << ">>> Enter data for Bicycle <<<\n";
-    bicycle.input_info();
-    return is;
+Bicycle& Bicycle::operator=(const Bicycle& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+    }
+    return *this;
 }

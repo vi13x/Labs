@@ -1,27 +1,23 @@
 #pragma once
-
 #include "TransportVehicle.h"
 
-class Cart : public TransportVehicle {
+class Cart : public TransportVehicle
+{
 public:
-    Cart(const std::string &name = "",
-         double distanceKm = 0,
-         double speedKmh = 0,
-         double passengerRatePerKm = 0,
-         double cargoRatePerKmPerKg = 0);
+    Cart();
+    Cart(const std::string& Name,
+         double Distance,
+         double PassengerRate,
+         double CargoRate,
+         double Speed);
+    Cart(const Cart& other);
+    ~Cart();
 
-    TransportVehicle* clone() const override;
-    std::string type_name() const override;
+    virtual void print_header() const override;
+    virtual void print_table() const override;
+    virtual void menu() const override;
 
-    void input_info() override;
-    void printHeader() override;
-    void printTable() override;
-    void display(int index = 0) override;
-
-    // УНИКАЛЬНЫЙ оператор присваивания для Cart
+    friend std::istream& operator>>(std::istream& is, Cart& ob);
+    friend std::ostream& operator<<(std::ostream& os, Cart& ob);
     Cart& operator=(const Cart& other);
-
-    // УНИКАЛЬНЫЕ перегрузки ввода/вывода для Cart
-    friend std::ostream& operator<<(std::ostream& os, const Cart& cart);
-    friend std::istream& operator>>(std::istream& is, Cart& cart);
 };

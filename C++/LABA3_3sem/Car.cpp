@@ -1,64 +1,59 @@
 #include "Car.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Car::Car(const std::string &name,
-         double distanceKm,
-         double speedKmh,
-         double passengerRatePerKm,
-         double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Car::Car() : TransportVehicle() {}
 
-TransportVehicle* Car::clone() const {
-    return new Car(*this);
+Car::Car(const std::string& Name,
+         double Distance,
+         double PassengerRate,
+         double CargoRate,
+         double Speed)
+        : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed) {}
+
+Car::Car(const Car& other) : TransportVehicle(other) {}
+
+Car::~Car() = default;
+
+void Car::print_header() const
+{
+    TransportVehicle::print_header();
 }
 
-std::string Car::type_name() const {
-    return "Car";
+void Car::print_table() const
+{
+    std::cout << std::left
+              << std::setw(15) << "Автомобиль"  << "| "
+              << std::setw(15) << name          << "| "
+              << std::setw(10) << distance      << "| "
+              << std::setw(10) << speed         << "| "
+              << std::setw(15) << passengerRatePerKm << "| "
+              << std::setw(15) << cargoRatePerKmPerKg << "| "
+              << std::setw(10) << time_in_path() << "| " << std::endl;
 }
 
-void Car::input_info() {
-    std::cout << "[Car] Input data:\n";
-    TransportVehicle::input_info();
+void Car::menu() const
+{
+    std::cout << "\n=== МЕНЮ АВТОМОБИЛЯ ===\n";
+    TransportVehicle::menu();
 }
 
-void Car::printHeader() {
-    TransportVehicle::printHeader();
+std::istream& operator>>(std::istream& is, Car& ob)
+{
+    is >> static_cast<TransportVehicle&>(ob);
+    return is;
 }
 
-void Car::printTable() {
-    TransportVehicle::printTable();
-}
-
-void Car::display(int index) {
-    TransportVehicle::display(index);
-}
-
-// ===== Уникальный оператор присваивания =====
-Car& Car::operator=(const Car& other) {
-    if (this != &other) {
-        // копируем базовую часть
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
-        // если будут свои поля у Car — копировать их здесь
-    }
-    return *this;
-}
-
-// ===== Уникальная перегрузка вывода для Car =====
-std::ostream& operator<<(std::ostream& os, const Car& car) {
-    os << "[Car object] ";
-    // используем базовый оператор вывода для общей части
-    os << static_cast<const TransportVehicle&>(car);
+std::ostream& operator<<(std::ostream& os, Car& ob)
+{
+    os << static_cast<TransportVehicle&>(ob);
     return os;
 }
 
-// ===== Уникальная перегрузка ввода для Car =====
-std::istream& operator>>(std::istream& is, Car& car) {
-    std::cout << ">>> Enter data for Car <<<\n";
-    car.input_info(); // использует переопределённый input_info()
-    return is;
+Car& Car::operator=(const Car& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+    }
+    return *this;
 }

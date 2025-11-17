@@ -1,61 +1,59 @@
 #include "Cart.h"
-#include <iostream>
-#include <iomanip>
+#include <limits>
 
-Cart::Cart(const std::string &name,
-           double distanceKm,
-           double speedKmh,
-           double passengerRatePerKm,
-           double cargoRatePerKmPerKg)
-        : TransportVehicle(name, distanceKm, speedKmh, passengerRatePerKm, cargoRatePerKmPerKg) {}
+Cart::Cart() : TransportVehicle() {}
 
-TransportVehicle* Cart::clone() const {
-    return new Cart(*this);
+Cart::Cart(const std::string& Name,
+           double Distance,
+           double PassengerRate,
+           double CargoRate,
+           double Speed)
+        : TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed) {}
+
+Cart::Cart(const Cart& other) : TransportVehicle(other) {}
+
+Cart::~Cart() = default;
+
+void Cart::print_header() const
+{
+    TransportVehicle::print_header();
 }
 
-std::string Cart::type_name() const {
-    return "Cart";
+void Cart::print_table() const
+{
+    std::cout << std::left
+              << std::setw(17) << "Повозка"        << "| "
+              << std::setw(20) << name             << "| "
+              << std::setw(12) << distance         << "| "
+              << std::setw(12) << speed            << "| "
+              << std::setw(18) << passengerRatePerKm << "| "
+              << std::setw(18) << cargoRatePerKmPerKg << "| "
+              << std::setw(12) << time_in_path()   << "| " << std::endl;
 }
 
-void Cart::input_info() {
-    std::cout << "[Cart] Input data:\n";
-    TransportVehicle::input_info();
+void Cart::menu() const
+{
+    std::cout << "\n=== МЕНЮ ПОВОЗКИ ===\n";
+    TransportVehicle::menu();
 }
 
-void Cart::printHeader() {
-    TransportVehicle::printHeader();
+std::istream& operator>>(std::istream& is, Cart& ob)
+{
+    is >> static_cast<TransportVehicle&>(ob);
+    return is;
 }
 
-void Cart::printTable() {
-    TransportVehicle::printTable();
-}
-
-void Cart::display(int index) {
-    TransportVehicle::display(index);
-}
-
-// Уникальный оператор присваивания
-Cart& Cart::operator=(const Cart& other) {
-    if (this != &other) {
-        this->name                = other.name;
-        this->distanceKm          = other.distanceKm;
-        this->speedKmh            = other.speedKmh;
-        this->passengerRatePerKm  = other.passengerRatePerKm;
-        this->cargoRatePerKmPerKg = other.cargoRatePerKmPerKg;
-    }
-    return *this;
-}
-
-// Уникальный вывод
-std::ostream& operator<<(std::ostream& os, const Cart& cart) {
-    os << "[Cart object] ";
-    os << static_cast<const TransportVehicle&>(cart);
+std::ostream& operator<<(std::ostream& os, Cart& ob)
+{
+    os << static_cast<TransportVehicle&>(ob);
     return os;
 }
 
-// Уникальный ввод
-std::istream& operator>>(std::istream& is, Cart& cart) {
-    std::cout << ">>> Enter data for Cart <<<\n";
-    cart.input_info();
-    return is;
+Cart& Cart::operator=(const Cart& other)
+{
+    if (this != &other)
+    {
+        TransportVehicle::operator=(other);
+    }
+    return *this;
 }

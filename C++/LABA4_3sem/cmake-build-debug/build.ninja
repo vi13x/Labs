@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: LABA4_3sem
+# Project: LABA3_3sem
 # Configurations: Debug
 # =============================================================================
 
@@ -39,76 +39,70 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/cmake-build-debug/
+cmake_ninja_workdir = C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/cmake-build-debug/
 # =============================================================================
-# Object build statements for EXECUTABLE target LABA4_3sem
+# Object build statements for EXECUTABLE target LABA3_3sem
 
 
 #############################################
-# Order-only phony target for LABA4_3sem
+# Order-only phony target for LABA3_3sem
 
-build cmake_object_order_depends_target_LABA4_3sem: phony || .
+build cmake_object_order_depends_target_LABA3_3sem: phony || .
 
-build CMakeFiles/LABA4_3sem.dir/main.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/main.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\main.cpp.obj.d
+build CMakeFiles/LABA3_3sem.dir/main.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/main.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\main.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
-build CMakeFiles/LABA4_3sem.dir/TransportVehicle.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/TransportVehicle.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\TransportVehicle.cpp.obj.d
+build CMakeFiles/LABA3_3sem.dir/TransportVehicle.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/TransportVehicle.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\TransportVehicle.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
-build CMakeFiles/LABA4_3sem.dir/Deque.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Deque.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Deque.cpp.obj.d
+build CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Cart.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Cart.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
-build CMakeFiles/LABA4_3sem.dir/Cart.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Cart.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Cart.cpp.obj.d
+build CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Bicycle.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Bicycle.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
-build CMakeFiles/LABA4_3sem.dir/Car.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Car.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Car.cpp.obj.d
+build CMakeFiles/LABA3_3sem.dir/Car.cpp.obj: CXX_COMPILER__LABA3_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/Car.cpp || cmake_object_order_depends_target_LABA3_3sem
+  DEP_FILE = CMakeFiles\LABA3_3sem.dir\Car.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
-
-build CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Bicycle.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Bicycle.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA3_3sem.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target LABA4_3sem
+# Link build statements for EXECUTABLE target LABA3_3sem
 
 
 #############################################
-# Link the executable LABA4_3sem.exe
+# Link the executable LABA3_3sem.exe
 
-build LABA4_3sem.exe: CXX_EXECUTABLE_LINKER__LABA4_3sem_Debug CMakeFiles/LABA4_3sem.dir/main.cpp.obj CMakeFiles/LABA4_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA4_3sem.dir/Deque.cpp.obj CMakeFiles/LABA4_3sem.dir/Cart.cpp.obj CMakeFiles/LABA4_3sem.dir/Car.cpp.obj CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj
+build LABA3_3sem.exe: CXX_EXECUTABLE_LINKER__LABA3_3sem_Debug CMakeFiles/LABA3_3sem.dir/main.cpp.obj CMakeFiles/LABA3_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA3_3sem.dir/Cart.cpp.obj CMakeFiles/LABA3_3sem.dir/Bicycle.cpp.obj CMakeFiles/LABA3_3sem.dir/Car.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_DIR = CMakeFiles\LABA3_3sem.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_FILE = LABA4_3sem.exe
-  TARGET_IMPLIB = libLABA4_3sem.dll.a
-  TARGET_PDB = LABA4_3sem.exe.dbg
+  TARGET_FILE = LABA3_3sem.exe
+  TARGET_IMPLIB = libLABA3_3sem.dll.a
+  TARGET_PDB = LABA3_3sem.exe.dbg
 
 
 #############################################
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D "C:\Users\Vladislav Lakotko\CLionProjects\LABA4_3sem\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
+  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D "C:\Users\Vladislav Lakotko\CLionProjects\LABA3_3sem\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -119,7 +113,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D "C:\Users\Vladislav Lakotko\CLionProjects\LABA4_3sem\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" --regenerate-during-build -S"C:\Users\Vladislav Lakotko\CLionProjects\LABA4_3sem" -B"C:\Users\Vladislav Lakotko\CLionProjects\LABA4_3sem\cmake-build-debug""
+  COMMAND = C:\Windows\system32\cmd.exe /C "cd /D "C:\Users\Vladislav Lakotko\CLionProjects\LABA3_3sem\cmake-build-debug" && "C:\Program Files\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" --regenerate-during-build -S"C:\Users\Vladislav Lakotko\CLionProjects\LABA3_3sem" -B"C:\Users\Vladislav Lakotko\CLionProjects\LABA3_3sem\cmake-build-debug""
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -129,7 +123,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build LABA4_3sem: phony LABA4_3sem.exe
+build LABA3_3sem: phony LABA3_3sem.exe
 
 # =============================================================================
 # Folder targets.
@@ -137,9 +131,9 @@ build LABA4_3sem: phony LABA4_3sem.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/Vladislav Lakotko/CLionProjects/LABA4_3sem/cmake-build-debug
+# Folder: C:/Users/Vladislav Lakotko/CLionProjects/LABA3_3sem/cmake-build-debug
 
-build all: phony LABA4_3sem.exe
+build all: phony LABA3_3sem.exe
 
 # =============================================================================
 # Built-in targets
@@ -148,14 +142,14 @@ build all: phony LABA4_3sem.exe
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/WindowsPaths.cmake C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/CMakeLists.txt CMakeCache.txt CMakeFiles/3.29.6/CMakeCCompiler.cmake CMakeFiles/3.29.6/CMakeCXXCompiler.cmake CMakeFiles/3.29.6/CMakeRCCompiler.cmake CMakeFiles/3.29.6/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/WindowsPaths.cmake C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/CMakeLists.txt CMakeCache.txt CMakeFiles/3.29.6/CMakeCCompiler.cmake CMakeFiles/3.29.6/CMakeCXXCompiler.cmake CMakeFiles/3.29.6/CMakeRCCompiler.cmake CMakeFiles/3.29.6/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/WindowsPaths.cmake C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/CMakeLists.txt CMakeCache.txt CMakeFiles/3.29.6/CMakeCCompiler.cmake CMakeFiles/3.29.6/CMakeCXXCompiler.cmake CMakeFiles/3.29.6/CMakeRCCompiler.cmake CMakeFiles/3.29.6/CMakeSystem.cmake: phony
+build C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeRCInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Compiler/GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-C.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/Windows.cmake C$:/Program$ Files/JetBrains/CLion$ 2024.2.2/bin/cmake/win/x64/share/cmake-3.29/Modules/Platform/WindowsPaths.cmake C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA3_3sem/CMakeLists.txt CMakeCache.txt CMakeFiles/3.29.6/CMakeCCompiler.cmake CMakeFiles/3.29.6/CMakeCXXCompiler.cmake CMakeFiles/3.29.6/CMakeRCCompiler.cmake CMakeFiles/3.29.6/CMakeSystem.cmake: phony
 
 
 #############################################

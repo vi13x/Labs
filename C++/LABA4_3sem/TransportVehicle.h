@@ -1,63 +1,51 @@
 #pragma once
-
 #include <string>
 #include <iostream>
 #include <iomanip>
 
-class TransportVehicle {
+class TransportVehicle
+{
 protected:
-    std::string name;
-    double distanceKm{};
-    double speedKmh{};
-    double passengerRatePerKm{};
-    double cargoRatePerKmPerKg{};
+    std::string name;               // Название
+    double distance;                // Расстояние, км
+    double passengerRatePerKm;      // Цена за км на 1 пассажира
+    double cargoRatePerKmPerKg;     // Цена за км на 1 кг груза
+    double speed;                   // Скорость, км/ч
 
 public:
     TransportVehicle();
-
-    TransportVehicle(std::string name,
-                     double distanceKm,
-                     double speedKmh,
-                     double passengerRatePerKm,
-                     double cargoRatePerKmPerKg);
-
+    TransportVehicle(const std::string& Name,
+                     double Distance,
+                     double PassengerRate,
+                     double CargoRate,
+                     double Speed);
+    TransportVehicle(const TransportVehicle& other);
     virtual ~TransportVehicle();
 
-    // Базовый полиморфный интерфейс
-    virtual TransportVehicle* clone() const;
-    virtual std::string type_name() const;
+    // Виртуальный интерфейс
+    virtual double time_in_path() const;                 // Время в пути (часы)
+    virtual double cost_passengers(int passengers) const; // Стоимость перевозки пассажиров
+    virtual double cost_cargo(double weightKg) const;     // Стоимость перевозки груза
+    virtual void print_header() const;                    // Шапка таблицы
+    virtual void print_table() const;                     // Одна строка таблицы
+    virtual void menu() const;                            // Меню базовых операций
 
-    virtual double time_in_path_hours() const;
-    virtual double cost_passengers(int numPassengers) const;
-    virtual double cost_cargo(double weightKg) const;
+    // Геттеры
+    std::string GetName() const;
+    double GetDistance() const;
+    double GetPassengerRate() const;
+    double GetCargoRate() const;
+    double GetSpeed() const;
 
-    void input_info_passengers(int numPassengers) const;
-    void input_info_cargo(double weightKg) const;
+    // Сеттеры
+    void SetName(const std::string& Name);
+    void SetDistance(double Distance);
+    void SetPassengerRate(double Rate);
+    void SetCargoRate(double Rate);
+    void SetSpeed(double Speed);
 
-    // getters
-    const std::string& get_name() const { return name; }
-    double get_distance_km() const { return distanceKm; }
-    double get_speed_kmh() const { return speedKmh; }
-    double get_passenger_rate_per_km() const { return passengerRatePerKm; }
-    double get_cargo_rate_per_km_per_kg() const { return cargoRatePerKmPerKg; }
-
-    // setters
-    void set_name(const std::string& n) { name = n; }
-    void set_distance_km(double d) { distanceKm = d; }
-    void set_speed_kmh(double s) { speedKmh = s; }
-    void set_passenger_rate_per_km(double r) { passengerRatePerKm = r; }
-    void set_cargo_rate_per_km_per_kg(double r) { cargoRatePerKmPerKg = r; }
-
-    // Сравнение по имени (для поиска/сортировки)
-    bool operator==(const TransportVehicle& other) const;
-
-    // Ввод/вывод полей объекта
-    virtual void input_info();
-    virtual void printHeader();
-    virtual void printTable();          // строка таблицы без номера
-    virtual void display(int index = 0); // шапка + строка с номером
-
-    // Операторы ввода/вывода базового типа
-    friend std::ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle);
-    friend std::istream& operator>>(std::istream& is, TransportVehicle& vehicle);
+    // Операторы
+    friend std::istream& operator>>(std::istream& is, TransportVehicle& ob);
+    friend std::ostream& operator<<(std::ostream& os, TransportVehicle& ob);
+    TransportVehicle& operator=(const TransportVehicle& other);
 };

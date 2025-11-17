@@ -1,298 +1,247 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include <windows.h>
-
-#include "TransportVehicle.h"
 #include "Car.h"
 #include "Bicycle.h"
 #include "Cart.h"
-#include "Deque.h"
+#include <windows.h>
 
 using namespace std;
 
-const int MAX_OBJECTS = 10;
+void menu_vehicle(TransportVehicle& t)
+{
+    while (true)
+    {
+        t.menu();
+        int choice;
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-// Хранилище всех транспортных средств — шаблонный дек
-Deque<TransportVehicle*> vehicleDeque;
+        switch (choice)
+        {
+            case 0:
+                return;
 
-void clearInput() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
+            case 1:
+                cout << "\nТЕКУЩИЕ ДАННЫЕ:\n";
+                t.print_header();
+                t.print_table();
+                cout << endl;
+                break;
 
-void printMenu() {
-    const int width = 60;
+            case 2:
+            {
+                string n;
+                cout << "Введите новое название: ";
+                getline(cin, n);
+                t.SetName(n);
+                cout << endl;
+                break;
+            }
 
-    cout << "\n " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
+            case 3:
+            {
+                double d;
+                cout << "Введите новое расстояние: ";
+                cin >> d;
+                t.SetDistance(d);
+                cout << endl;
+                break;
+            }
 
-    string title = "TRANSPORT VEHICLE MANAGEMENT SYSTEM";
-    int padding = (width - 2 - (int)title.length()) / 2;
-    cout << " |" << setw(padding) << " " << title
-         << setw(width - 2 - padding - (int)title.length()) << " " << "|" << endl;
+            case 4:
+            {
+                double p;
+                cout << "Введите новую цену за км (пассажиры): ";
+                cin >> p;
+                t.SetPassengerRate(p);
+                cout << endl;
+                break;
+            }
 
-    cout << " " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
+            case 5:
+            {
+                double c;
+                cout << "Введите новую цену за км груза (кг): ";
+                cin >> c;
+                t.SetCargoRate(c);
+                cout << endl;
+                break;
+            }
 
-    cout << " |  1. Add Transport Vehicle" << setw(width - 28) << " " << "|" << endl;
-    cout << " |  2. Show All" << setw(width - 15) << " " << "|" << endl;
-    cout << " |  3. Edit Transport Vehicle" << setw(width - 29) << " " << "|" << endl;
-    cout << " |  4. Delete Transport Vehicle" << setw(width - 31) << " " << "|" << endl;
-    cout << " |  5. Calculate Cost and Time" << setw(width - 30) << " " << "|" << endl;
-    cout << " |  6. Find by name" << setw(width - 21) << " " << "  |" << endl;
-    cout << " |  7. Sort by name" << setw(width - 21) << " " << "  |" << endl;
-    cout << " |  0. Exit" << setw(width - 11) << " " << "|" << endl;
+            case 6:
+            {
+                double v;
+                cout << "Введите новую скорость: ";
+                cin >> v;
+                t.SetSpeed(v);
+                cout << endl;
+                break;
+            }
 
-    cout << " " << setfill('=') << setw(width) << "=" << setfill(' ') << endl;
-    cout << " Select option: ";
-}
+            case 7:
+                cout << "Название: " << t.GetName() << endl << endl;
+                break;
 
-void addObject() {
-    if (vehicleDeque.size() >= MAX_OBJECTS) {
-        cout << "Cannot add more objects! Maximum reached.\n";
-        return;
-    }
+            case 8:
+                cout << "Расстояние: " << t.GetDistance() << endl << endl;
+                break;
 
-    cout << "Select vehicle type:\n";
-    cout << "1. Car\n";
-    cout << "2. Bicycle\n";
-    cout << "3. Cart\n";
-    cout << "Choice: ";
-    int type;
-    cin >> type;
-    clearInput();
+            case 9:
+                cout << "Цена/км пассажиров: " << t.GetPassengerRate() << endl << endl;
+                break;
 
-    TransportVehicle* newObject = nullptr;
+            case 10:
+                cout << "Цена/км груза: " << t.GetCargoRate() << endl << endl;
+                break;
 
-    switch (type) {
-        case 1:
-            newObject = new Car;
-            break;
-        case 2:
-            newObject = new Bicycle;
-            break;
-        case 3:
-            newObject = new Cart;
-            break;
-        default:
-            cout << "Invalid type selection.\n";
-            return;
-    }
+            case 11:
+                cout << "Скорость: " << t.GetSpeed() << endl << endl;
+                break;
 
-    // Вызовется базовый operator>> (TransportVehicle&),
-    // который дернёт виртуальный input_info() (Car/Bicycle/Cart)
-    cin >> *newObject;
+            case 12:
+            {
+                int people;
+                cout << "Введите количество пассажиров: ";
+                cin >> people;
+                cout << "Стоимость: " << t.cost_passengers(people) << endl;
+                cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
+                break;
+            }
 
-    vehicleDeque.push_back(newObject);
-    cout << "Transport Vehicle added successfully!\n";
-}
-
-void showAll() {
-    if (!vehicleDeque.empty()) {
-        for (std::size_t i = 0; i < vehicleDeque.size(); ++i) {
-            vehicleDeque[i]->display(static_cast<int>(i));
-        }
-        cout << "+----+------------+----------------------+------------+----------+--------------------+---------------+----------+\n";
-    } else {
-        cout << "\nNo Transport Vehicles found.\n";
-    }
-}
-
-void editObject() {
-    if (vehicleDeque.empty()) {
-        cout << "No objects to edit.\n";
-        return;
-    }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (std::size_t i = 0; i < vehicleDeque.size(); i++) {
-        cout << i + 1 << ". " << *vehicleDeque[i] << endl;
-    }
-
-    cout << "Select object to edit: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || static_cast<std::size_t>(index) > vehicleDeque.size()) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    TransportVehicle& obj = *vehicleDeque[index - 1];
-
-    cout << "Current data: " << obj << endl;
-    cout << "Enter new data:\n";
-    cin >> obj;
-
-    cout << "Object updated successfully!\n";
-}
-
-void deleteObject() {
-    if (vehicleDeque.empty()) {
-        cout << "No objects to delete.\n";
-        return;
-    }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (std::size_t i = 0; i < vehicleDeque.size(); i++) {
-        cout << i + 1 << ". " << *vehicleDeque[i] << endl;
-    }
-
-    cout << "Select object to delete: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || static_cast<std::size_t>(index) > vehicleDeque.size()) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    std::size_t idx = static_cast<std::size_t>(index) - 1;
-    cout << "Deleting: " << *vehicleDeque[idx] << endl;
-
-    delete vehicleDeque[idx];   // освобождаем память объекта
-    vehicleDeque.erase(idx);    // удаляем указатель из дека
-
-    cout << "Object deleted successfully!\n";
-}
-
-void calculateCosts() {
-    if (vehicleDeque.empty()) {
-        cout << "No objects to calculate.\n";
-        return;
-    }
-
-    cout << "\nAvailable Transport Vehicles:\n";
-    for (std::size_t i = 0; i < vehicleDeque.size(); i++) {
-        cout << i + 1 << ". " << *vehicleDeque[i] << endl;
-    }
-
-    cout << "Select object for calculation: ";
-    int index;
-    cin >> index;
-    clearInput();
-
-    if (index < 1 || static_cast<std::size_t>(index) > vehicleDeque.size()) {
-        cout << "Invalid selection.\n";
-        return;
-    }
-
-    TransportVehicle& obj = *vehicleDeque[index - 1];
-
-    cout << "Enter number of passengers: ";
-    int passengers;
-    cin >> passengers;
-    clearInput();
-
-    cout << "Enter cargo weight (kg): ";
-    double cargo;
-    cin >> cargo;
-    clearInput();
-
-    cout << "\nCalculation Results:\n";
-    cout << "Passenger Transport:\n";
-    obj.input_info_passengers(passengers);
-    cout << "\nCargo Transport:\n";
-    obj.input_info_cargo(cargo);
-}
-
-// Поиск по имени (используем operator== в TransportVehicle)
-void findByName() {
-    if (vehicleDeque.empty()) {
-        cout << "No objects to search.\n";
-        return;
-    }
-
-    cout << "Enter name to search: ";
-    std::string name;
-    std::getline(cin, name);
-
-    TransportVehicle pattern;
-    pattern.set_name(name);
-
-    bool found = false;
-    for (std::size_t i = 0; i < vehicleDeque.size(); ++i) {
-        if (*vehicleDeque[i] == pattern) {   // operator==
-            cout << "Found at position " << (i + 1) << ": " << *vehicleDeque[i] << endl;
-            found = true;
-        }
-    }
-
-    if (!found) {
-        cout << "No TransportVehicle with name \"" << name << "\" found.\n";
-    }
-}
-
-// Сортировка по имени (простая пузырьковая)
-void sortByName() {
-    if (vehicleDeque.size() < 2) {
-        cout << "Not enough objects to sort.\n";
-        return;
-    }
-
-    std::size_t n = vehicleDeque.size();
-    for (std::size_t i = 0; i + 1 < n; ++i) {
-        for (std::size_t j = 0; j + 1 < n - i; ++j) {
-            if (vehicleDeque[j]->get_name() > vehicleDeque[j + 1]->get_name()) {
-                std::swap(vehicleDeque[j], vehicleDeque[j + 1]);
+            case 13:
+            {
+                double kg;
+                cout << "Введите массу груза (кг): ";
+                cin >> kg;
+                cout << "Стоимость: " << t.cost_cargo(kg) << endl;
+                cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
+                break;
             }
         }
     }
-
-    cout << "Sorted by name.\n";
 }
 
-int main() {
+int main()
+{
     SetConsoleOutputCP(CP_UTF8);
-    int choice;
+    // ===========================
+    //   ВВОД КОЛИЧЕСТВА ОБЪЕКТОВ
+    // ===========================
 
-    do {
-        printMenu();
-        cin >> choice;
-        clearInput();
+    int carCount;
+    cout << "Сколько автомобилей создать? (минимум 2): ";
+    cin >> carCount;
 
-        switch (choice) {
-            case 1:
-                addObject();
-                break;
-            case 2:
-                showAll();
-                break;
-            case 3:
-                editObject();
-                break;
-            case 4:
-                deleteObject();
-                break;
-            case 5:
-                calculateCosts();
-                break;
-            case 6:
-                findByName();
-                break;
-            case 7:
-                sortByName();
-                break;
-            case 0:
-                cout << "Goodbye!\n";
-                break;
-            default:
-                cout << "Invalid option!\n";
-        }
-
-        if (choice != 0) {
-            cout << "\nPress Enter to continue...";
-            cin.get();
-        }
-
-    } while (choice != 0);
-
-    // Освобождаем память всех оставшихся объектов
-    for (std::size_t i = 0; i < vehicleDeque.size(); ++i) {
-        delete vehicleDeque[i];
+    while (carCount < 2)
+    {
+        cout << "ОШИБКА! Автомобилей должно быть минимум 2.\nПовторите ввод: ";
+        cin >> carCount;
     }
-    vehicleDeque.clear();
+
+    int bicycleCount;
+    cout << "Сколько велосипедов создать? ";
+    cin >> bicycleCount;
+
+    int cartCount;
+    cout << "Сколько повозок создать? ";
+    cin >> cartCount;
+
+    // ===========================
+    //   ДИНАМИЧЕСКИЕ МАССИВЫ
+    // ===========================
+
+    Car* cars = new Car[carCount];
+    Bicycle* bicycles = new Bicycle[bicycleCount];
+    Cart* carts = new Cart[cartCount];
+
+    // ===========================
+    //   ВВОД ДАННЫХ
+    // ===========================
+
+    for (int i = 0; i < carCount; i++)
+    {
+        cout << "\nВведите данные автомобиля #" << i + 1 << ":\n";
+        cin >> cars[i];
+    }
+
+    for (int i = 0; i < bicycleCount; i++)
+    {
+        cout << "\nВведите данные велосипеда #" << i + 1 << ":\n";
+        cin >> bicycles[i];
+    }
+
+    for (int i = 0; i < cartCount; i++)
+    {
+        cout << "\nВведите данные повозки #" << i + 1 << ":\n";
+        cin >> carts[i];
+    }
+
+    // ===========================
+    //   ВЫВОД ТАБЛИЦЫ
+    // ===========================
+
+    cout << "\n\n===== ВСЕ ТРАНСПОРТЫ =====\n";
+    cars[0].print_header();
+
+    for (int i = 0; i < carCount; i++)
+        cars[i].print_table();
+
+    for (int i = 0; i < bicycleCount; i++)
+        bicycles[i].print_table();
+
+    for (int i = 0; i < cartCount; i++)
+        carts[i].print_table();
+
+    // ===========================
+    //   ВЫБОР ТРАНСПОРТА
+    // ===========================
+
+    cout << "\nВыберите тип транспорта для редактирования:\n";
+    cout << "1 — Автомобили\n2 — Велосипеды\n3 — Повозки\n0 — Выход\n";
+    int type;
+    cin >> type;
+
+    if (type == 0)
+    {
+        delete[] cars;
+        delete[] bicycles;
+        delete[] carts;
+        return 0;
+    }
+
+    int index;
+    switch (type)
+    {
+        case 1:
+            cout << "Выберите автомобиль (1-" << carCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= carCount)
+                menu_vehicle(cars[index - 1]);
+            break;
+
+        case 2:
+            cout << "Выберите велосипед (1-" << bicycleCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= bicycleCount)
+                menu_vehicle(bicycles[index - 1]);
+            break;
+
+        case 3:
+            cout << "Выберите повозку (1-" << cartCount << "): ";
+            cin >> index;
+            if (index >= 1 && index <= cartCount)
+                menu_vehicle(carts[index - 1]);
+            break;
+    }
+
+    // ===========================
+    //   ОСВОБОЖДЕНИЕ ПАМЯТИ
+    // ===========================
+
+    delete[] cars;
+    delete[] bicycles;
+    delete[] carts;
 
     return 0;
 }

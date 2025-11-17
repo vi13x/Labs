@@ -22,13 +22,13 @@ void Car::print_header() const
 void Car::print_table() const
 {
     std::cout << std::left
-              << std::setw(15) << "Автомобиль"  << "| "
-              << std::setw(15) << name          << "| "
-              << std::setw(10) << distance      << "| "
-              << std::setw(10) << speed         << "| "
-              << std::setw(15) << passengerRatePerKm << "| "
-              << std::setw(15) << cargoRatePerKmPerKg << "| "
-              << std::setw(10) << time_in_path() << "| " << std::endl;
+              << std::setw(20) << "Автомобиль"     << "| "
+              << std::setw(20) << name             << "| "
+              << std::setw(12) << distance         << "| "
+              << std::setw(12) << speed            << "| "
+              << std::setw(18) << passengerRatePerKm << "| "
+              << std::setw(18) << cargoRatePerKmPerKg << "| "
+              << std::setw(12) << time_in_path()   << "| " << std::endl;
 }
 
 void Car::menu() const

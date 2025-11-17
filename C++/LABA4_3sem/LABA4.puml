@@ -1,0 +1,121 @@
+@startuml
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam arrowThickness 2
+
+
+
+' =============================
+'        БАЗОВЫЙ КЛАСС
+' =============================
+class TransportVehicle {
+    - name : string
+    - distance : double
+    - passengerRatePerKm : double
+    - cargoRatePerKmPerKg : double
+    - speed : double
+
+    + TransportVehicle()
+    + TransportVehicle(Name, Distance, PassengerRate, CargoRate, Speed)
+    + TransportVehicle(other)
+    + ~TransportVehicle()
+
+    + time_in_path() : double
+    + cost_passengers(passengers:int) : double
+    + cost_cargo(weightKg:double) : double
+    + print_header() : void
+    + print_table() : void
+    + menu() : void
+
+    + GetName() : string
+    + GetDistance() : double
+    + GetPassengerRate() : double
+    + GetCargoRate() : double
+    + GetSpeed() : double
+
+    + SetName(Name:string)
+    + SetDistance(Distance:double)
+    + SetPassengerRate(Rate:double)
+    + SetCargoRate(Rate:double)
+    + SetSpeed(Speed:double)
+
+    + operator>>()
+    + operator<<()
+    + operator=()
+}
+
+' =============================
+'   ПРОИЗВОДНЫЕ КЛАССЫ
+' =============================
+class Car {
+    + print_header()
+    + print_table()
+    + menu()
+    + operator>>()
+    + operator<<()
+}
+
+class Bicycle {
+    + print_header()
+    + print_table()
+    + menu()
+    + operator>>()
+    + operator<<()
+}
+
+class Cart {
+    + print_header()
+    + print_table()
+    + menu()
+    + operator>>()
+    + operator<<()
+}
+
+TransportVehicle <|-- Car
+TransportVehicle <|-- Bicycle
+TransportVehicle <|-- Cart
+
+' =============================
+'         ШАБЛОН ДЕКА
+' =============================
+
+class "Deque<T>" as Deque_t {
+    - Node* head
+    - Node* tail
+    - size : int
+
+    + Deque()
+    + ~Deque()
+
+    + push_front(T)
+    + push_back(T)
+    + pop_front() : bool
+    + pop_back() : bool
+    + find(T) : T*
+    + sort(comp)
+    + print()
+    + for_each(func)
+    + empty() : bool
+}
+
+class "Node<T>" as Node_t {
+    - data : T
+    - next : Node<T>*
+    - prev : Node<T>*
+}
+
+Deque_t *-- Node_t : composition
+
+' ------------------------------
+'   ТРИ ДЕКА (в main)
+' ------------------------------
+class "Deque<Car>" as Dc
+class "Deque<Bicycle>" as Db
+class "Deque<Cart>" as Dp
+
+Dc ..> Car
+Db ..> Bicycle
+Dp ..> Cart
+
+@enduml

@@ -1,5 +1,4 @@
 #include "Bicycle.h"
-#include <limits>
 
 Bicycle::Bicycle() : TransportVehicle() {}
 
@@ -33,7 +32,7 @@ void Bicycle::print_table() const
 
 void Bicycle::menu() const
 {
-    std::cout << "\n=== МЕНЮ ВЕЛОСИПЕДА ===\n";
+    std::cout << "\n=== МЕНЮ ВЕЛО ===\n";
     TransportVehicle::menu();
 }
 

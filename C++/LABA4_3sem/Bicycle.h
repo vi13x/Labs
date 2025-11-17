@@ -19,5 +19,6 @@ public:
 
     friend std::istream& operator>>(std::istream& is, Bicycle& ob);
     friend std::ostream& operator<<(std::ostream& os, Bicycle& ob);
+
     Bicycle& operator=(const Bicycle& other);
 };

@@ -1,5 +1,4 @@
 #include "Car.h"
-#include <limits>
 
 Car::Car() : TransportVehicle() {}
 
@@ -31,9 +30,10 @@ void Car::print_table() const
               << std::setw(12) << time_in_path()   << "| " << std::endl;
 }
 
+
 void Car::menu() const
 {
-    std::cout << "\n=== МЕНЮ АВТОМОБИЛЯ ===\n";
+    std::cout << "\n=== МЕНЮ АВТО ===\n";
     TransportVehicle::menu();
 }
 

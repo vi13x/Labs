@@ -6,46 +6,41 @@
 class TransportVehicle
 {
 protected:
-    std::string name;               // Название
-    double distance;                // Расстояние, км
-    double passengerRatePerKm;      // Цена за км на 1 пассажира
-    double cargoRatePerKmPerKg;     // Цена за км на 1 кг груза
-    double speed;                   // Скорость, км/ч
+    std::string name;
+    double distance;
+    double passengerRatePerKm;
+    double cargoRatePerKmPerKg;
+    double speed;
 
 public:
     TransportVehicle();
-    TransportVehicle(const std::string& Name,
-                     double Distance,
-                     double PassengerRate,
-                     double CargoRate,
-                     double Speed);
-    TransportVehicle(const TransportVehicle& other);
+    TransportVehicle(const std::string&, double, double, double, double);
+    TransportVehicle(const TransportVehicle&);
     virtual ~TransportVehicle();
 
-    // Виртуальный интерфейс
-    virtual double time_in_path() const;                 // Время в пути (часы)
-    virtual double cost_passengers(int passengers) const; // Стоимость перевозки пассажиров
-    virtual double cost_cargo(double weightKg) const;     // Стоимость перевозки груза
-    virtual void print_header() const;                    // Шапка таблицы
-    virtual void print_table() const;                     // Одна строка таблицы
-    virtual void menu() const;                            // Меню базовых операций
+    virtual double time_in_path() const;
+    virtual double cost_passengers(int) const;
+    virtual double cost_cargo(double) const;
 
-    // Геттеры
+    virtual void print_header() const;
+    virtual void print_table() const;
+    virtual void menu() const;
+
     std::string GetName() const;
     double GetDistance() const;
     double GetPassengerRate() const;
     double GetCargoRate() const;
     double GetSpeed() const;
 
-    // Сеттеры
-    void SetName(const std::string& Name);
-    void SetDistance(double Distance);
-    void SetPassengerRate(double Rate);
-    void SetCargoRate(double Rate);
-    void SetSpeed(double Speed);
+    void SetName(const std::string&);
+    void SetDistance(double);
+    void SetPassengerRate(double);
+    void SetCargoRate(double);
+    void SetSpeed(double);
 
-    // Операторы
-    friend std::istream& operator>>(std::istream& is, TransportVehicle& ob);
-    friend std::ostream& operator<<(std::ostream& os, TransportVehicle& ob);
-    TransportVehicle& operator=(const TransportVehicle& other);
+    bool operator==(const TransportVehicle&) const;
+
+    friend std::istream& operator>>(std::istream&, TransportVehicle&);
+    friend std::ostream& operator<<(std::ostream&, TransportVehicle&);
+    TransportVehicle& operator=(const TransportVehicle&);
 };

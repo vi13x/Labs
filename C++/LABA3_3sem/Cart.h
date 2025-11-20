@@ -13,8 +13,8 @@ public:
     Cart(const Cart& other);
     ~Cart();
 
+    std::string vehicle_type() const override;
     virtual void print_header() const override;
-    virtual void print_table() const override;
     virtual void menu() const override;
 
     friend std::istream& operator>>(std::istream& is, Cart& ob);

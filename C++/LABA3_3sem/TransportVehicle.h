@@ -26,8 +26,8 @@ public:
     virtual double time_in_path() const;                 // Время в пути (часы)
     virtual double cost_passengers(int passengers) const; // Стоимость перевозки пассажиров
     virtual double cost_cargo(double weightKg) const;     // Стоимость перевозки груза
+    virtual std::string vehicle_type() const;             // Тип транспорта (для таблиц)
     virtual void print_header() const;                    // Шапка таблицы
-    virtual void print_table() const;                     // Одна строка таблицы
     virtual void menu() const;                            // Меню базовых операций
 
     // Геттеры

@@ -25,8 +25,7 @@ void menu_vehicle(TransportVehicle& t)
             case 1:
                 cout << "\nТЕКУЩИЕ ДАННЫЕ:\n";
                 t.print_header();
-                t.print_table();
-                cout << endl;
+                cout << t << endl << endl;
                 break;
 
             case 2:
@@ -182,16 +181,30 @@ int main()
     // ===========================
 
     cout << "\n\n===== ВСЕ ТРАНСПОРТЫ =====\n";
-    cars[0].print_header();
 
-    for (int i = 0; i < carCount; i++)
-        cars[i].print_table();
+    if (carCount > 0)
+    {
+        cout << "\n-- Автомобили --\n";
+        cars[0].print_header();
+        for (int i = 0; i < carCount; i++)
+            cout << cars[i] << endl;
+    }
 
-    for (int i = 0; i < bicycleCount; i++)
-        bicycles[i].print_table();
+    if (bicycleCount > 0)
+    {
+        cout << "\n-- Велосипеды --\n";
+        bicycles[0].print_header();
+        for (int i = 0; i < bicycleCount; i++)
+            cout << bicycles[i] << endl;
+    }
 
-    for (int i = 0; i < cartCount; i++)
-        carts[i].print_table();
+    if (cartCount > 0)
+    {
+        cout << "\n-- Повозки --\n";
+        carts[0].print_header();
+        for (int i = 0; i < cartCount; i++)
+            cout << carts[i] << endl;
+    }
 
     // ===========================
     //   ВЫБОР ТРАНСПОРТА

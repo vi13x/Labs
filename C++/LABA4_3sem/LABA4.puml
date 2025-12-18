@@ -1,10 +1,22 @@
 @startuml
+!theme plain
+
 skinparam linetype ortho
+skinparam classRoundCorner 0
+skinparam classBorderThickness 2
+skinparam classFontName "Times New Roman"
+skinparam classFontSize 14
+skinparam classFontStyle normal
+skinparam classFontColor black
 skinparam classAttributeIconSize 0
-skinparam shadowing false
-skinparam arrowThickness 2
-
-
+skinparam classBorderColor black
+skinparam classBackgroundColor white
+skinparam classArrowColor black
+skinparam classAbstractFontStyle italic
+skinparam classAbstractFontColor black
+skinparam classAbstractUnderline true
+skinparam inheritanceArrowColor black
+hide circle
 
 ' =============================
 '        БАЗОВЫЙ КЛАСС
@@ -24,8 +36,9 @@ class TransportVehicle {
     + time_in_path() : double
     + cost_passengers(passengers:int) : double
     + cost_cargo(weightKg:double) : double
-    + print_header() : void
+    + vehicle_type() : string
     + print_table() : void
+    + print_separator() : void
     + menu() : void
 
     + GetName() : string
@@ -49,73 +62,200 @@ class TransportVehicle {
 '   ПРОИЗВОДНЫЕ КЛАССЫ
 ' =============================
 class Car {
-    + print_header()
-    + print_table()
-    + menu()
+    - fuelConsumption : double
+    - fuelType : string
+    - mileageSinceMaintenance : double
+    
+    + Car()
+    + Car(Name, Distance, PassengerRate, CargoRate, Speed)
+    + Car(other)
+    + ~Car()
+    
+    + vehicle_type() : string
+    + print_table() : void
+    + print_separator() : void
+    + menu() : void
+    
+    + get_fuel_consumption() : double
+    + set_fuel_consumption(consumption:double)
+    + get_fuel_type() : string
+    + set_fuel_type(type:string)
+    + get_mileage_since_maintenance() : double
+    + set_mileage_since_maintenance(mileage:double)
+    + needs_maintenance() : bool
+    + calculate_fuel_cost(price:double) : double
+    + update_mileage(additional:double)
+    
     + operator>>()
     + operator<<()
+    + operator=()
 }
 
 class Bicycle {
-    + print_header()
-    + print_table()
-    + menu()
+    - gears : int
+    - bicycleType : string
+    
+    + Bicycle()
+    + Bicycle(Name, Distance, PassengerRate, CargoRate, Speed)
+    + Bicycle(other)
+    + ~Bicycle()
+    
+    + vehicle_type() : string
+    + print_table() : void
+    + print_separator() : void
+    + menu() : void
+    
+    + get_gears() : int
+    + set_gears(gears:int)
+    + get_bicycle_type() : string
+    + set_bicycle_type(type:string)
+    + can_climb_hill(gradient:double) : bool
+    + calculate_effort_coefficient() : double
+    
     + operator>>()
     + operator<<()
+    + operator=()
 }
 
 class Cart {
-    + print_header()
-    + print_table()
-    + menu()
+    - horseCount : int
+    - cartType : string
+    - hoursSinceLastFeed : double
+    
+    + Cart()
+    + Cart(Name, Distance, PassengerRate, CargoRate, Speed)
+    + Cart(other)
+    + ~Cart()
+    
+    + vehicle_type() : string
+    + print_table() : void
+    + print_separator() : void
+    + menu() : void
+    
+    + get_horse_count() : int
+    + set_horse_count(count:int)
+    + get_cart_type() : string
+    + set_cart_type(type:string)
+    + get_hours_since_last_feed() : double
+    + set_hours_since_last_feed(hours:double)
+    + needs_horse_feed() : bool
+    + calculate_feed_cost(price:double) : double
+    + feed_horses()
+    
     + operator>>()
     + operator<<()
+    + operator=()
 }
-
-TransportVehicle <|-- Car
-TransportVehicle <|-- Bicycle
-TransportVehicle <|-- Cart
 
 ' =============================
 '         ШАБЛОН ДЕКА
 ' =============================
-
 class "Deque<T>" as Deque_t {
-    - Node* head
-    - Node* tail
-    - size : int
+    - head : Node<T>*
+    - tail : Node<T>*
 
     + Deque()
     + ~Deque()
 
-    + push_front(T)
-    + push_back(T)
-    + pop_front() : bool
-    + pop_back() : bool
-    + find(T) : T*
-    + sort(comp)
-    + print()
-    + for_each(func)
+    + push_front(value:const T&) : void
+    + push_back(value:const T&) : void
+    + pop_front(value:T&) : bool
+    + pop_back(value:T&) : bool
+    + find(key:const T&, result:T&) : bool
+    + find_if(pred:Predicate, result:T&) : bool
+    + sort(comp:Compare) : void
+    + print() : void
+    + for_each(func:Func) : void
     + empty() : bool
+    + clear() : void
 }
 
 class "Node<T>" as Node_t {
     - data : T
     - next : Node<T>*
     - prev : Node<T>*
+    
+    + Node(value:const T&)
 }
 
-Deque_t *-- Node_t : composition
+' =============================
+'   КЛАСС УПРАВЛЕНИЯ МЕНЮ
+' =============================
+class MenuManager {
+    {static} {template} + menu_object<T>(t:T&, dq:Deque<T>&) : void
+    {static} {template} - handleDequeOperation<T>(t:T&, dq:Deque<T>&, choice:int, firstDequeItem:int, isCart:bool) : void
+    {static} {template} - handleUniqueMenuItems<T>(t:T&, choice:int) : void
+}
 
-' ------------------------------
-'   ТРИ ДЕКА (в main)
-' ------------------------------
+' =============================
+'   КЛАСС ПРИЛОЖЕНИЯ
+' =============================
+class Application {
+    - carCount : int
+    - bicycleCount : int
+    - cartCount : int
+    - cars : Car*
+    - bicycles : Bicycle*
+    - carts : Cart*
+    - carDeque : Deque<Car>
+    - bicycleDeque : Deque<Bicycle>
+    - cartDeque : Deque<Cart>
+    
+    - inputCounts() : void
+    - createVehicles() : void
+    {template} - fillObjects<T>(objects:T*, count:int, typeName:string) : void
+    {template} - initializeDeque<T>(objects:T*, count:int, deque:Deque<T>&) : void
+    {template} - printObjects<T>(objects:T*, count:int, typeName:string, header:string) : void
+    - selectAndEditVehicle() : void
+    - cleanup() : void
+    
+    + Application()
+    + ~Application()
+    + run() : void
+}
+
+' =============================
+'   ЭКЗЕМПЛЯРЫ ШАБЛОНОВ
+' =============================
 class "Deque<Car>" as Dc
 class "Deque<Bicycle>" as Db
 class "Deque<Cart>" as Dp
 
-Dc ..> Car
-Db ..> Bicycle
-Dp ..> Cart
+' =============================
+'   СВЯЗИ МЕЖДУ КЛАССАМИ
+' =============================
+
+' Наследование
+TransportVehicle <|-- Car : наследует
+TransportVehicle <|-- Bicycle : наследует
+TransportVehicle <|-- Cart : наследует
+
+' Композиция
+Deque_t *-- Node_t : содержит
+
+' Специализация шаблона
+Deque_t <|.. Dc : специализация
+Deque_t <|.. Db : специализация
+Deque_t <|.. Dp : специализация
+
+' Агрегация
+Application o-- Car : содержит
+Application o-- Bicycle : содержит
+Application o-- Cart : содержит
+
+' Композиция
+Application *-- Dc : содержит
+Application *-- Db : содержит
+Application *-- Dp : содержит
+
+' Зависимость
+Application ..> MenuManager : использует
+MenuManager ..> Deque_t : использует
+MenuManager ..> TransportVehicle : использует
+
+' Связи специализаций с типами
+Dc ..> Car : хранит
+Db ..> Bicycle : хранит
+Dp ..> Cart : хранит
 
 @enduml

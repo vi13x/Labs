@@ -49,16 +49,37 @@ double TransportVehicle::cost_cargo(double w) const
     return w <= 0 ? 0 : w * cargoRatePerKmPerKg * distance;
 }
 
-void TransportVehicle::print_header() const
+std::string TransportVehicle::vehicle_type() const
 {
-    std::cout << std::left
-              << std::setw(13) << "Тип"            << "| "
-              << std::setw(28) << "Название"       << "| "
-              << std::setw(17) << "Дистанция   "      << "| "
-              << std::setw(12) << "Скорость    "       << "| "
-              << std::setw(18) << "Цена/км пасс      "   << "| "
-              << std::setw(18) << "Цена/км кг        "     << "| "
-              << std::setw(12) << "Время"          << "     | " << std::endl;
+    return "Транспорт";
+}
+
+void TransportVehicle::print_separator() const
+{
+    std::cout << "+" << std::string(15, '-') << "+" << std::string(15, '-') << "+" 
+              << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+              << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+              << std::string(15, '-') << "+" << std::endl;
+}
+
+std::ostream& operator<<(std::ostream& os, const TransportVehicle::HeaderTag&)
+{
+    os << "+" << std::string(15, '-') << "+" << std::string(15, '-') << "+" 
+       << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+       << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+       << std::string(15, '-') << "+" << std::endl;
+    os << "|" << std::left << std::setw(15) << "Тип"            << "|"
+       << std::setw(15) << "Название"       << "|"
+       << std::setw(15) << "Дистанция"      << "|"
+       << std::setw(15) << "Скорость"       << "|"
+       << std::setw(15) << "Цена/км пасс"   << "|"
+       << std::setw(15) << "Цена/км кг"     << "|"
+       << std::setw(15) << "Время"          << "|" << std::endl;
+    os << "+" << std::string(15, '-') << "+" << std::string(15, '-') << "+" 
+       << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+       << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+       << std::string(15, '-') << "+" << std::endl;
+    return os;
 }
 
 void TransportVehicle::print_table() const
@@ -99,11 +120,39 @@ double TransportVehicle::GetPassengerRate() const { return passengerRatePerKm; }
 double TransportVehicle::GetCargoRate() const { return cargoRatePerKmPerKg; }
 double TransportVehicle::GetSpeed() const { return speed; }
 
-void TransportVehicle::SetName(const std::string& s) { name = s; }
-void TransportVehicle::SetDistance(double v) { if (v >= 0) distance = v; }
-void TransportVehicle::SetPassengerRate(double v) { if (v >= 0) passengerRatePerKm = v; }
-void TransportVehicle::SetCargoRate(double v) { if (v >= 0) cargoRatePerKmPerKg = v; }
-void TransportVehicle::SetSpeed(double v) { if (v > 0) speed = v; }
+void TransportVehicle::SetName(const std::string& Name) { name = Name; }
+
+void TransportVehicle::SetDistance(double Distance)
+{
+    if (Distance >= 0)
+        distance = Distance;
+    else
+        std::cout << "Ошибка: расстояние не может быть отрицательным!\n";
+}
+
+void TransportVehicle::SetPassengerRate(double Rate)
+{
+    if (Rate >= 0)
+        passengerRatePerKm = Rate;
+    else
+        std::cout << "Ошибка: цена не может быть отрицательной!\n";
+}
+
+void TransportVehicle::SetCargoRate(double Rate)
+{
+    if (Rate >= 0)
+        cargoRatePerKmPerKg = Rate;
+    else
+        std::cout << "Ошибка: цена не может быть отрицательной!\n";
+}
+
+void TransportVehicle::SetSpeed(double Speed)
+{
+    if (Speed > 0)
+        speed = Speed;
+    else
+        std::cout << "Ошибка: скорость должна быть > 0!\n";
+}
 
 bool TransportVehicle::operator==(const TransportVehicle& o) const
 {
@@ -112,35 +161,33 @@ bool TransportVehicle::operator==(const TransportVehicle& o) const
 
 std::istream& operator>>(std::istream& is, TransportVehicle& ob)
 {
-    std::cout << "Название: ";
-    getline(is >> std::ws, ob.name);
+    std::cout << "Введите название: ";
+    std::getline(is >> std::ws, ob.name);
 
-    std::cout << "Расстояние: ";
+    std::cout << "Введите расстояние (км): ";
     is >> ob.distance;
 
-    std::cout << "Цена/км (пассажиры): ";
+    std::cout << "Введите цену за км (пассажиры): ";
     is >> ob.passengerRatePerKm;
 
-    std::cout << "Цена/км (кг груза): ";
+    std::cout << "Введите цену за км (1 кг груза): ";
     is >> ob.cargoRatePerKmPerKg;
 
-    std::cout << "Скорость: ";
+    std::cout << "Введите скорость (км/ч): ";
     is >> ob.speed;
 
     is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return is;
 }
 
-std::ostream& operator<<(std::ostream& os, TransportVehicle& ob)
+std::ostream& operator<<(std::ostream& os, const TransportVehicle& ob)
 {
-    os << std::left
-            << std::setw(13) << "Транспорт" << "| "
-            << std::setw(28) << ob.name << "| "
-            << std::setw(12) << ob.distance << "| "
-            << std::setw(12) << ob.speed << "| "
-            << std::setw(18) << ob.passengerRatePerKm << "| "
-            << std::setw(18) << ob.cargoRatePerKmPerKg << "| "
-            << std::setw(12) << ob.time_in_path() << "| " << std::endl;
+    os << std::setw(10) << std::left << ob.name << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.distance << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.speed << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.passengerRatePerKm << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.cargoRatePerKmPerKg << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.time_in_path() << "|";
     return os;
 }
 

@@ -21,9 +21,9 @@ public:
     virtual double time_in_path() const;
     virtual double cost_passengers(int) const;
     virtual double cost_cargo(double) const;
-
-    virtual void print_header() const;
+    virtual std::string vehicle_type() const;
     virtual void print_table() const;
+    virtual void print_separator() const;
     virtual void menu() const;
 
     std::string GetName() const;
@@ -41,6 +41,11 @@ public:
     bool operator==(const TransportVehicle&) const;
 
     friend std::istream& operator>>(std::istream&, TransportVehicle&);
-    friend std::ostream& operator<<(std::ostream&, TransportVehicle&);
+    friend std::ostream& operator<<(std::ostream&, const TransportVehicle&);
     TransportVehicle& operator=(const TransportVehicle&);
+
+    // Структура для вывода заголовка через operator<<
+    struct HeaderTag {};
+    static HeaderTag header() { return HeaderTag{}; }
+    friend std::ostream& operator<<(std::ostream&, const HeaderTag&);
 };

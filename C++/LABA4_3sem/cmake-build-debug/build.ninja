@@ -61,12 +61,6 @@ build CMakeFiles/LABA4_3sem.dir/TransportVehicle.cpp.obj: CXX_COMPILER__LABA4_3s
   OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
   OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
 
-build CMakeFiles/LABA4_3sem.dir/Deque.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Deque.cpp || cmake_object_order_depends_target_LABA4_3sem
-  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Deque.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
-  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
-
 build CMakeFiles/LABA4_3sem.dir/Cart.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Cart.cpp || cmake_object_order_depends_target_LABA4_3sem
   DEP_FILE = CMakeFiles\LABA4_3sem.dir\Cart.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
@@ -85,6 +79,12 @@ build CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA4_3sem_unscan
   OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
   OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
 
+build CMakeFiles/LABA4_3sem.dir/Application.cpp.obj: CXX_COMPILER__LABA4_3sem_unscanned_Debug C$:/Users/Vladislav$ Lakotko/CLionProjects/LABA4_3sem/Application.cpp || cmake_object_order_depends_target_LABA4_3sem
+  DEP_FILE = CMakeFiles\LABA4_3sem.dir\Application.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\LABA4_3sem.dir
+  OBJECT_FILE_DIR = CMakeFiles\LABA4_3sem.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target LABA4_3sem
@@ -93,7 +93,7 @@ build CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj: CXX_COMPILER__LABA4_3sem_unscan
 #############################################
 # Link the executable LABA4_3sem.exe
 
-build LABA4_3sem.exe: CXX_EXECUTABLE_LINKER__LABA4_3sem_Debug CMakeFiles/LABA4_3sem.dir/main.cpp.obj CMakeFiles/LABA4_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA4_3sem.dir/Deque.cpp.obj CMakeFiles/LABA4_3sem.dir/Cart.cpp.obj CMakeFiles/LABA4_3sem.dir/Car.cpp.obj CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj
+build LABA4_3sem.exe: CXX_EXECUTABLE_LINKER__LABA4_3sem_Debug CMakeFiles/LABA4_3sem.dir/main.cpp.obj CMakeFiles/LABA4_3sem.dir/TransportVehicle.cpp.obj CMakeFiles/LABA4_3sem.dir/Cart.cpp.obj CMakeFiles/LABA4_3sem.dir/Car.cpp.obj CMakeFiles/LABA4_3sem.dir/Bicycle.cpp.obj CMakeFiles/LABA4_3sem.dir/Application.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\LABA4_3sem.dir

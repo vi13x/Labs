@@ -59,14 +59,15 @@ std::string TransportVehicle::vehicle_type() const
 
 void TransportVehicle::print_header() const
 {
-    std::cout << std::left
-              << std::setw(13) << "Тип"            << "| "
-              << std::setw(28) << "Название"       << "| "
-              << std::setw(17) << "Дистанция   "      << "| "
-              << std::setw(12) << "Скорость    "       << "| "
-              << std::setw(18) << "Цена/км пасс      "   << "| "
-              << std::setw(18) << "Цена/км кг        "     << "| "
-              << std::setw(12) << "Время"          << "     | " << std::endl;
+    // Базовый заголовок не используется напрямую, переопределяется в дочерних классах
+}
+
+void TransportVehicle::print_separator() const
+{
+    std::cout << "+" << std::string(15, '-') << "+" << std::string(15, '-') << "+" 
+              << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+              << std::string(15, '-') << "+" << std::string(15, '-') << "+"
+              << std::string(15, '-') << "+" << std::endl;
 }
 
 void TransportVehicle::menu() const
@@ -85,7 +86,6 @@ void TransportVehicle::menu() const
     std::cout << "11. Получить скорость\n";
     std::cout << "12. Посчитать стоимость перевозки пассажиров\n";
     std::cout << "13. Посчитать стоимость перевозки груза\n";
-    std::cout << "Выбор: ";
 }
 
 // ===== Геттеры =====
@@ -154,14 +154,13 @@ std::istream& operator>>(std::istream& is, TransportVehicle& ob)
 
 std::ostream& operator<<(std::ostream& os, TransportVehicle& ob)
 {
-    os << std::left
-       << std::setw(20) << ob.vehicle_type()  << "| "
-       << std::setw(20) << ob.name           << "| "
-       << std::setw(12) << ob.distance       << "| "
-       << std::setw(12) << ob.speed          << "| "
-       << std::setw(18) << ob.passengerRatePerKm << "| "
-       << std::setw(18) << ob.cargoRatePerKmPerKg << "| "
-       << std::setw(12) << ob.time_in_path() << "| ";
+    // Выводим только данные объекта (без заголовка - заголовок выводят дочерние классы)
+    os << std::setw(10) << std::left << ob.name << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.distance << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.speed << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.passengerRatePerKm << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.cargoRatePerKmPerKg << "|"
+       << std::setw(10) << std::right << std::fixed << std::setprecision(2) << ob.time_in_path() << "|";
     return os;
 }
 

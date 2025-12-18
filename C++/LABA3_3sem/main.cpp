@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include <string>
 #include "Car.h"
 #include "Bicycle.h"
 #include "Cart.h"
@@ -24,8 +25,9 @@ void menu_vehicle(TransportVehicle& t)
 
             case 1:
                 cout << "\nТЕКУЩИЕ ДАННЫЕ:\n";
-                t.print_header();
-                cout << t << endl << endl;
+                cout << t << endl;
+                t.print_separator();
+                cout << endl;
                 break;
 
             case 2:
@@ -43,6 +45,7 @@ void menu_vehicle(TransportVehicle& t)
                 double d;
                 cout << "Введите новое расстояние: ";
                 cin >> d;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 t.SetDistance(d);
                 cout << endl;
                 break;
@@ -53,6 +56,7 @@ void menu_vehicle(TransportVehicle& t)
                 double p;
                 cout << "Введите новую цену за км (пассажиры): ";
                 cin >> p;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 t.SetPassengerRate(p);
                 cout << endl;
                 break;
@@ -63,6 +67,7 @@ void menu_vehicle(TransportVehicle& t)
                 double c;
                 cout << "Введите новую цену за км груза (кг): ";
                 cin >> c;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 t.SetCargoRate(c);
                 cout << endl;
                 break;
@@ -73,6 +78,7 @@ void menu_vehicle(TransportVehicle& t)
                 double v;
                 cout << "Введите новую скорость: ";
                 cin >> v;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 t.SetSpeed(v);
                 cout << endl;
                 break;
@@ -103,6 +109,7 @@ void menu_vehicle(TransportVehicle& t)
                 int people;
                 cout << "Введите количество пассажиров: ";
                 cin >> people;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Стоимость: " << t.cost_passengers(people) << endl;
                 cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
                 break;
@@ -113,6 +120,7 @@ void menu_vehicle(TransportVehicle& t)
                 double kg;
                 cout << "Введите массу груза (кг): ";
                 cin >> kg;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Стоимость: " << t.cost_cargo(kg) << endl;
                 cout << "Время: " << t.time_in_path() << " ч" << endl << endl;
                 break;
@@ -124,39 +132,34 @@ void menu_vehicle(TransportVehicle& t)
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
-    // ===========================
-    //   ВВОД КОЛИЧЕСТВА ОБЪЕКТОВ
-    // ===========================
 
     int carCount;
     cout << "Сколько автомобилей создать? (минимум 2): ";
     cin >> carCount;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    while (carCount < 1)
+    while (carCount < 2)
     {
         cout << "ОШИБКА! Автомобилей должно быть минимум 2.\nПовторите ввод: ";
         cin >> carCount;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
     int bicycleCount;
     cout << "Сколько велосипедов создать? ";
     cin >> bicycleCount;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     int cartCount;
     cout << "Сколько повозок создать? ";
     cin >> cartCount;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    // ===========================
-    //   ДИНАМИЧЕСКИЕ МАССИВЫ
-    // ===========================
 
     Car* cars = new Car[carCount];
     Bicycle* bicycles = new Bicycle[bicycleCount];
     Cart* carts = new Cart[cartCount];
 
-    // ===========================
-    //   ВВОД ДАННЫХ
-    // ===========================
 
     for (int i = 0; i < carCount; i++)
     {
@@ -176,9 +179,7 @@ int main()
         cin >> carts[i];
     }
 
-    // ===========================
-    //   ВЫВОД ТАБЛИЦЫ
-    // ===========================
+
 
     cout << "\n\n===== ВСЕ ТРАНСПОРТЫ =====\n";
 
@@ -187,7 +188,11 @@ int main()
         cout << "\n-- Автомобили --\n";
         cars[0].print_header();
         for (int i = 0; i < carCount; i++)
+        {
+            cout << "| " << setw(2) << right << (i + 1) << " | ";
             cout << cars[i] << endl;
+        }
+        cout << "+----+----------+----------+----------+----------+----------+----------+" << endl;
     }
 
     if (bicycleCount > 0)
@@ -195,7 +200,11 @@ int main()
         cout << "\n-- Велосипеды --\n";
         bicycles[0].print_header();
         for (int i = 0; i < bicycleCount; i++)
+        {
+            cout << "| " << setw(2) << right << (i + 1) << " | ";
             cout << bicycles[i] << endl;
+        }
+        cout << "+----+----------+----------+----------+----------+----------+----------+" << endl;
     }
 
     if (cartCount > 0)
@@ -203,17 +212,20 @@ int main()
         cout << "\n-- Повозки --\n";
         carts[0].print_header();
         for (int i = 0; i < cartCount; i++)
+        {
+            cout << "| " << setw(2) << right << (i + 1) << " | ";
             cout << carts[i] << endl;
+        }
+        cout << "+----+---------------+----------+----------+---------------+----------+----------+----------------+-------------+-------------+----------------+" << endl;
     }
 
-    // ===========================
-    //   ВЫБОР ТРАНСПОРТА
-    // ===========================
+
 
     cout << "\nВыберите тип транспорта для редактирования:\n";
     cout << "1 — Автомобили\n2 — Велосипеды\n3 — Повозки\n0 — Выход\n";
     int type;
     cin >> type;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     if (type == 0)
     {
@@ -229,6 +241,7 @@ int main()
         case 1:
             cout << "Выберите автомобиль (1-" << carCount << "): ";
             cin >> index;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             if (index >= 1 && index <= carCount)
                 menu_vehicle(cars[index - 1]);
             break;
@@ -236,6 +249,7 @@ int main()
         case 2:
             cout << "Выберите велосипед (1-" << bicycleCount << "): ";
             cin >> index;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             if (index >= 1 && index <= bicycleCount)
                 menu_vehicle(bicycles[index - 1]);
             break;
@@ -243,14 +257,13 @@ int main()
         case 3:
             cout << "Выберите повозку (1-" << cartCount << "): ";
             cin >> index;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             if (index >= 1 && index <= cartCount)
                 menu_vehicle(carts[index - 1]);
             break;
     }
 
-    // ===========================
-    //   ОСВОБОЖДЕНИЕ ПАМЯТИ
-    // ===========================
+
 
     delete[] cars;
     delete[] bicycles;

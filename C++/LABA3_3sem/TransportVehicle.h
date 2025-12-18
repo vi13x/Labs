@@ -28,6 +28,7 @@ public:
     virtual double cost_cargo(double weightKg) const;     // Стоимость перевозки груза
     virtual std::string vehicle_type() const;             // Тип транспорта (для таблиц)
     virtual void print_header() const;                    // Шапка таблицы
+    virtual void print_separator() const;                 // Разделительная линия таблицы
     virtual void menu() const;                            // Меню базовых операций
 
     // Геттеры

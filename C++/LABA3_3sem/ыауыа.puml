@@ -1,0 +1,116 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class TransportVehicle {
+  - name : std::string
+  - distance : double
+  - passengerRatePerKm : double
+  - cargoRatePerKmPerKg : double
+  - speed : double
+  ..
+  + TransportVehicle()
+  + TransportVehicle(name: const std::string&, distance: double, passengerRate: double, cargoRate: double, speed: double)
+  + TransportVehicle(other: const TransportVehicle&)
+  + ~TransportVehicle()
+  + time_in_path() : double
+  + cost_passengers(passengers: int) : double
+  + cost_cargo(weightKg: double) : double
+  + vehicle_type() : std::string
+  + print_header() : void
+  + menu() : void
+  + GetName() : std::string
+  + GetDistance() : double
+  + GetPassengerRate() : double
+  + GetCargoRate() : double
+  + GetSpeed() : double
+  + SetName(name: const std::string&) : void
+  + SetDistance(distance: double) : void
+  + SetPassengerRate(rate: double) : void
+  + SetCargoRate(rate: double) : void
+  + SetSpeed(speed: double) : void
+  + operator>>(is: std::istream&, ob: TransportVehicle&) : std::istream&
+  + operator<<(os: std::ostream&, ob: TransportVehicle&) : std::ostream&
+  + operator=(other: const TransportVehicle&) : TransportVehicle&
+}
+
+class Car {
+  - fuelConsumption : double
+  - fuelType : std::string
+  - mileageSinceMaintenance : double
+  ..
+  + Car()
+  + Car(name: const std::string&, distance: double, passengerRate: double, cargoRate: double, speed: double)
+  + Car(other: const Car&)
+  + ~Car()
+  + vehicle_type() : std::string
+  + print_header() : void
+  + menu() : void
+  + get_fuel_consumption() : double
+  + set_fuel_consumption(consumption: double) : void
+  + get_fuel_type() : std::string
+  + set_fuel_type(type: const std::string&) : void
+  + get_mileage_since_maintenance() : double
+  + set_mileage_since_maintenance(mileage: double) : void
+  + needs_maintenance() : bool
+  + calculate_fuel_cost(fuelPrice: double) : double
+  + update_mileage(additionalMileage: double) : void
+  + operator>>(is: std::istream&, ob: Car&) : std::istream&
+  + operator<<(os: std::ostream&, ob: Car&) : std::ostream&
+  + operator=(other: const Car&) : Car&
+}
+
+class Bicycle {
+  - gears : int
+  - bicycleType : std::string
+  ..
+  + Bicycle()
+  + Bicycle(name: const std::string&, distance: double, passengerRate: double, cargoRate: double, speed: double)
+  + Bicycle(other: const Bicycle&)
+  + ~Bicycle()
+  + vehicle_type() : std::string
+  + print_header() : void
+  + menu() : void
+  + get_gears() : int
+  + set_gears(gears: int) : void
+  + get_bicycle_type() : std::string
+  + set_bicycle_type(type: const std::string&) : void
+  + can_climb_hill(gradient: double) : bool
+  + calculate_effort_coefficient() : double
+  + operator>>(is: std::istream&, ob: Bicycle&) : std::istream&
+  + operator<<(os: std::ostream&, ob: Bicycle&) : std::ostream&
+  + operator=(other: const Bicycle&) : Bicycle&
+}
+
+class Cart {
+  - horseCount : int
+  - cartType : std::string
+  - hoursSinceLastFeed : double
+  ..
+  + Cart()
+  + Cart(name: const std::string&, distance: double, passengerRate: double, cargoRate: double, speed: double)
+  + Cart(other: const Cart&)
+  + ~Cart()
+  + vehicle_type() : std::string
+  + print_header() : void
+  + menu() : void
+  + get_horse_count() : int
+  + set_horse_count(count: int) : void
+  + get_cart_type() : std::string
+  + set_cart_type(type: const std::string&) : void
+  + get_hours_since_last_feed() : double
+  + set_hours_since_last_feed(hours: double) : void
+  + needs_horse_feed() : bool
+  + calculate_feed_cost(feedPricePerHorse: double) : double
+  + feed_horses() : void
+  + operator>>(is: std::istream&, ob: Cart&) : std::istream&
+  + operator<<(os: std::ostream&, ob: Cart&) : std::ostream&
+  + operator=(other: const Cart&) : Cart&
+}
+
+TransportVehicle <|-- Car
+TransportVehicle <|-- Bicycle
+TransportVehicle <|-- Cart
+
+@enduml

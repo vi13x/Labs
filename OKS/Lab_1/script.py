@@ -1,5 +1,4 @@
 import sys
-import codecs
 import serial
 import serial.tools.list_ports
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -16,28 +15,20 @@ class SerialReaderThread(QThread):
         super().__init__()
         self.serial_port = serial_port
         self.running = True
-        self.decoder = codecs.getincrementaldecoder('utf-8')()
 
     def run(self):
         while self.running:
             if self.serial_port and self.serial_port.is_open:
                 try:
                     if self.serial_port.in_waiting > 0:
-                        raw_data = self.serial_port.read(
-                            self.serial_port.in_waiting
-                        )
-
-                        text_data = self.decoder.decode(raw_data)
-
+                        raw_data = self.serial_port.read(self.serial_port.in_waiting)
+                        text_data = raw_data.decode('utf-8', errors='ignore')
                         if text_data:
                             self.data_received.emit(text_data)
                     else:
                         self.msleep(50)
-
                 except Exception as e:
-                    self.error_occurred.emit(
-                        f"Ошибка чтения: {str(e)}"
-                    )
+                    self.error_occurred.emit(f"Ошибка чтения: {str(e)}")
                     self.msleep(1000)
 
     def stop(self):
@@ -46,21 +37,31 @@ class SerialReaderThread(QThread):
 
 
 class CharLineEdit(QLineEdit):
+    """Поле ввода, которое отдаёт каждый нажатый символ наружу и не хранит его у себя."""
     char_pressed = pyqtSignal(str)
 
     def keyPressEvent(self, event):
-        if event.text() and event.key() != Qt.Key.Key_Return:
+        if event.key() == Qt.Key.Key_Return:
+            # Enter → \n уходит в порт как обычный символ
+            self.char_pressed.emit('\n')
+        elif event.text():
+            # любой печатный символ → сразу в порт
             self.char_pressed.emit(event.text())
-        super().keyPressEvent(event)
+        # super() не вызываем: поле не должно само накапливать текст
 
 
 class ComPortApp(QMainWindow):
+    # сигнал наружу: «счётчик отправленных символов изменился»
+    tx_count_changed = pyqtSignal(int)
+
     def __init__(self):
         super().__init__()
         self.serial = serial.Serial()
         self.reader_thread = None
         self.tx_count = 0
         self.init_ui()
+        # подключаем сигнал счётчика к обработчику статуса
+        self.tx_count_changed.connect(self.on_tx_count_changed)
 
     def init_ui(self):
         self.setWindowTitle("COM-порт Мессенджер (Вариант 1)")
@@ -79,7 +80,7 @@ class ComPortApp(QMainWindow):
         self.baudrate_combo.addItems(["4800", "9600", "19200", "38400", "115200"])
         self.baudrate_combo.setCurrentText("9600")
 
-        self.toggle_btn = QPushButton("Открыть/Закрыть порт")
+        self.toggle_btn = QPushButton("Открыть порт")
         self.toggle_btn.clicked.connect(self.toggle_port)
 
         ctrl_layout.addWidget(QLabel("COM-порт:"))
@@ -131,6 +132,7 @@ class ComPortApp(QMainWindow):
 
             self.port_combo.setEnabled(False)
             self.baudrate_combo.setEnabled(False)
+            self.toggle_btn.setText("Закрыть порт")
 
             self.reader_thread = SerialReaderThread(self.serial)
             self.reader_thread.data_received.connect(self.receive_data)
@@ -144,23 +146,27 @@ class ComPortApp(QMainWindow):
     def close_port(self):
         if self.reader_thread:
             self.reader_thread.stop()
-            self.reader_thread = None
-
         if self.serial.is_open:
             self.serial.close()
 
         self.port_combo.setEnabled(True)
         self.baudrate_combo.setEnabled(True)
+        self.toggle_btn.setText("Открыть порт")
         self.update_status("Порт закрыт")
 
     def send_data(self, char):
+        """Отправляет ровно один символ в COM-порт, обновляет счётчик, очищает поле."""
         if not self.serial.is_open:
             return
 
         try:
-            self.serial.write(char.encode('utf-8'))
+            self.serial.write(char.encode('utf-8'))   # 1 символ → в порт
+            self.serial.flush()                       # ← ждём, пока байт реально уйдёт в линию
             self.tx_count += 1
-            self.update_status("Символ отправлен")
+            self.input_field.clear()                  # очистка поля после отправки
+            display = '\\n' if char == '\n' else char
+            self.update_status(f"Отправлен: '{display}'")
+            self.tx_count_changed.emit(self.tx_count) # ← передаём данные для счётчика
         except Exception as e:
             self.show_error(f"Ошибка отправки: {e}")
 
@@ -168,8 +174,19 @@ class ComPortApp(QMainWindow):
         self.output_field.insertPlainText(text)
         self.output_field.ensureCursorVisible()
 
+    def on_tx_count_changed(self, count):
+        """Обработчик сигнала tx_count_changed — обновляет статус-строку."""
+        self.status_label.setText(
+            f"Статус: Порт закрыт | Отправлено символов: {count}"
+            if not self.serial.is_open
+            else f"Статус: Открыт {self.serial.port}, {self.serial.baudrate} бод "
+                 f"| Отправлено символов: {count}"
+        )
+
     def update_status(self, msg):
-        self.status_label.setText(f"Статус: {msg} | Отправлено символов: {self.tx_count}")
+        self.status_label.setText(
+            f"Статус: {msg} | Отправлено символов: {self.tx_count}"
+        )
 
     def show_error(self, error_msg):
         QMessageBox.critical(self, "Ошибка", error_msg)

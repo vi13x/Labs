@@ -26,18 +26,13 @@ class SerialReaderThread(QThread):
                         raw_data = self.serial_port.read(
                             self.serial_port.in_waiting
                         )
-
                         text_data = self.decoder.decode(raw_data)
-
                         if text_data:
                             self.data_received.emit(text_data)
                     else:
                         self.msleep(50)
-
                 except Exception as e:
-                    self.error_occurred.emit(
-                        f"Ошибка чтения: {str(e)}"
-                    )
+                    self.error_occurred.emit(f"Ошибка чтения: {str(e)}")
                     self.msleep(1000)
 
     def stop(self):
@@ -73,6 +68,7 @@ class ComPortApp(QMainWindow):
 
         ctrl_layout = QHBoxLayout()
         self.port_combo = QComboBox()
+        self.port_combo.setEditable(True)  # Поле снова доступно для ручного ввода
         self.update_ports()
 
         self.baudrate_combo = QComboBox()
@@ -104,10 +100,13 @@ class ComPortApp(QMainWindow):
         layout.addWidget(self.status_label)
 
     def update_ports(self):
-        ports = [p.device for p in serial.tools.list_ports.comports()]
-        if not ports:
-            ports = ["COM1", "COM2", "COM3"]
-        self.port_combo.addItems(ports)
+        detected_ports = [p.device for p in serial.tools.list_ports.comports()]
+        all_ports = set(detected_ports + [f"COM{i}" for i in range(1, 21)])
+        sorted_ports = sorted(
+            list(all_ports),
+            key=lambda x: int(x.replace("COM", "")) if x.startswith("COM") and x[3:].isdigit() else 0
+        )
+        self.port_combo.addItems(sorted_ports)
 
     def toggle_port(self):
         if self.serial.is_open:
@@ -149,8 +148,6 @@ class ComPortApp(QMainWindow):
         if self.serial.is_open:
             self.serial.close()
 
-        self.port_combo.setEnabled(True)
-        self.baudrate_combo.setEnabled(True)
         self.update_status("Порт закрыт")
 
     def send_data(self, char):

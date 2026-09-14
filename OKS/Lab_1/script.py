@@ -1,4 +1,5 @@
 import sys
+import codecs
 import serial
 import serial.tools.list_ports
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -15,20 +16,28 @@ class SerialReaderThread(QThread):
         super().__init__()
         self.serial_port = serial_port
         self.running = True
+        self.decoder = codecs.getincrementaldecoder('utf-8')()
 
     def run(self):
         while self.running:
             if self.serial_port and self.serial_port.is_open:
                 try:
                     if self.serial_port.in_waiting > 0:
-                        raw_data = self.serial_port.read(self.serial_port.in_waiting)
-                        text_data = raw_data.decode('utf-8', errors='ignore')
+                        raw_data = self.serial_port.read(
+                            self.serial_port.in_waiting
+                        )
+
+                        text_data = self.decoder.decode(raw_data)
+
                         if text_data:
                             self.data_received.emit(text_data)
                     else:
                         self.msleep(50)
+
                 except Exception as e:
-                    self.error_occurred.emit(f"Ошибка чтения: {str(e)}")
+                    self.error_occurred.emit(
+                        f"Ошибка чтения: {str(e)}"
+                    )
                     self.msleep(1000)
 
     def stop(self):
@@ -70,7 +79,7 @@ class ComPortApp(QMainWindow):
         self.baudrate_combo.addItems(["4800", "9600", "19200", "38400", "115200"])
         self.baudrate_combo.setCurrentText("9600")
 
-        self.toggle_btn = QPushButton("Открыть порт")
+        self.toggle_btn = QPushButton("Открыть/Закрыть порт")
         self.toggle_btn.clicked.connect(self.toggle_port)
 
         ctrl_layout.addWidget(QLabel("COM-порт:"))
@@ -122,7 +131,6 @@ class ComPortApp(QMainWindow):
 
             self.port_combo.setEnabled(False)
             self.baudrate_combo.setEnabled(False)
-            self.toggle_btn.setText("Закрыть порт")
 
             self.reader_thread = SerialReaderThread(self.serial)
             self.reader_thread.data_received.connect(self.receive_data)
@@ -136,12 +144,13 @@ class ComPortApp(QMainWindow):
     def close_port(self):
         if self.reader_thread:
             self.reader_thread.stop()
+            self.reader_thread = None
+
         if self.serial.is_open:
             self.serial.close()
 
         self.port_combo.setEnabled(True)
         self.baudrate_combo.setEnabled(True)
-        self.toggle_btn.setText("Открыть порт")
         self.update_status("Порт закрыт")
 
     def send_data(self, char):

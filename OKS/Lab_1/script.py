@@ -1,10 +1,9 @@
 import sys
-import codecs
 import serial
 import serial.tools.list_ports
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                             QHBoxLayout, QLabel, QComboBox, QPushButton,
-                             QTextEdit, QLineEdit, QMessageBox)
+                             QHBoxLayout, QLabel, QComboBox,
+                             QTextEdit, QLineEdit, QMessageBox, QGroupBox)
 from PyQt6.QtCore import QThread, pyqtSignal, Qt
 
 
@@ -16,23 +15,22 @@ class SerialReaderThread(QThread):
         super().__init__()
         self.serial_port = serial_port
         self.running = True
-        self.decoder = codecs.getincrementaldecoder('utf-8')()
 
     def run(self):
         while self.running:
             if self.serial_port and self.serial_port.is_open:
                 try:
                     if self.serial_port.in_waiting > 0:
-                        raw_data = self.serial_port.read(
-                            self.serial_port.in_waiting
-                        )
-                        text_data = self.decoder.decode(raw_data)
+                        raw_data = self.serial_port.read(self.serial_port.in_waiting)
+                        # При разных скоростях биты смещаются, и символы превращаются
+                        # в характерные "битые" знаки замены (\ufffd / ), как и требуется
+                        text_data = raw_data.decode('utf-8', errors='replace')
                         if text_data:
                             self.data_received.emit(text_data)
                     else:
-                        self.msleep(50)
+                        self.msleep(40)
                 except Exception as e:
-                    self.error_occurred.emit(f"Ошибка чтения: {str(e)}")
+                    self.error_occurred.emit(f"Ошибка чтения данных: {e}")
                     self.msleep(1000)
 
     def stop(self):
@@ -44,7 +42,9 @@ class CharLineEdit(QLineEdit):
     char_pressed = pyqtSignal(str)
 
     def keyPressEvent(self, event):
-        if event.text() and event.key() != Qt.Key.Key_Return:
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            self.char_pressed.emit('\n')
+        elif event.text():
             self.char_pressed.emit(event.text())
         super().keyPressEvent(event)
 
@@ -58,67 +58,90 @@ class ComPortApp(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("COM-порт Мессенджер (Вариант 1)")
-        self.resize(550, 450)
+        self.setWindowTitle("COM-порт Мессенджер")
+        self.resize(560, 480)
         self.setStyleSheet("QWidget { font-size: 14px; }")
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
 
+        # Окно управления
+        control_group = QGroupBox("Окно управления")
         ctrl_layout = QHBoxLayout()
+
+        # Выпадающий список портов: только выбор из доступных, без ручного ввода
         self.port_combo = QComboBox()
-        self.port_combo.setEditable(True)  # Поле снова доступно для ручного ввода
+        self.port_combo.setEditable(False)
         self.update_ports()
+        self.port_combo.currentTextChanged.connect(self.try_lock_and_open_port)
 
         self.baudrate_combo = QComboBox()
-        self.baudrate_combo.addItems(["4800", "9600", "19200", "38400", "115200"])
+        self.baudrate_combo.addItems([
+            "110", "300", "600", "1200", "2400", "4800", "9600",
+            "14400", "19200", "38400", "57600", "115200"
+        ])
         self.baudrate_combo.setCurrentText("9600")
-
-        self.toggle_btn = QPushButton("Открыть/Закрыть порт")
-        self.toggle_btn.clicked.connect(self.toggle_port)
+        self.baudrate_combo.currentTextChanged.connect(self.update_baudrate)
 
         ctrl_layout.addWidget(QLabel("COM-порт:"))
         ctrl_layout.addWidget(self.port_combo)
         ctrl_layout.addWidget(QLabel("Скорость:"))
         ctrl_layout.addWidget(self.baudrate_combo)
-        ctrl_layout.addWidget(self.toggle_btn)
-        layout.addLayout(ctrl_layout)
+        control_group.setLayout(ctrl_layout)
+        layout.addWidget(control_group)
 
-        layout.addWidget(QLabel("Окно ввода (передача сразу после нажатия):"))
+        # Поле мгновенного ввода
+        layout.addWidget(QLabel("Строка ввода (посимвольная передача):"))
         self.input_field = CharLineEdit()
         self.input_field.char_pressed.connect(self.send_data)
         layout.addWidget(self.input_field)
 
+        # Окно вывода принятых сообщений
         layout.addWidget(QLabel("Окно вывода (принятые сообщения):"))
         self.output_field = QTextEdit()
         self.output_field.setReadOnly(True)
         layout.addWidget(self.output_field)
 
-        self.status_label = QLabel("Статус: Порт закрыт | Передано символов: 0")
+        # Статус
+        status_group = QGroupBox("Окно статуса")
+        status_layout = QVBoxLayout()
+        self.status_label = QLabel("Передано символов: 0")
         self.status_label.setStyleSheet("color: #0055aa; font-weight: bold;")
-        layout.addWidget(self.status_label)
+        status_layout.addWidget(self.status_label)
+        status_group.setLayout(status_layout)
+        layout.addWidget(status_group)
 
     def update_ports(self):
-        detected_ports = [p.device for p in serial.tools.list_ports.comports()]
-        all_ports = set(detected_ports + [f"COM{i}" for i in range(1, 21)])
-        sorted_ports = sorted(
-            list(all_ports),
-            key=lambda x: int(x.replace("COM", "")) if x.startswith("COM") and x[3:].isdigit() else 0
-        )
-        self.port_combo.addItems(sorted_ports)
+        self.port_combo.clear()
+        self.port_combo.addItem("")
+        # Сканируем только реально присутствующие в ОС порты
+        ports = [p.device for p in serial.tools.list_ports.comports()]
+        if ports:
+            self.port_combo.addItems(sorted(ports))
+        self.port_combo.setCurrentIndex(0)
 
-    def toggle_port(self):
-        if self.serial.is_open:
-            self.close_port()
-        else:
-            self.open_port()
+    def get_current_baudrate(self) -> int:
+        try:
+            return int(self.baudrate_combo.currentText())
+        except ValueError:
+            return 9600
 
-    def open_port(self):
-        port_name = self.port_combo.currentText()
-        baudrate = int(self.baudrate_combo.currentText())
+    def try_lock_and_open_port(self, port_name):
+        port_name = port_name.strip()
+        if not port_name or port_name == "":
+            return
+
+        baudrate = self.get_current_baudrate()
 
         try:
+            # Если был открыт другой порт — закрываем
+            if self.serial.is_open:
+                if self.reader_thread:
+                    self.reader_thread.stop()
+                    self.reader_thread = None
+                self.serial.close()
+
             self.serial.port = port_name
             self.serial.baudrate = baudrate
             self.serial.parity = serial.PARITY_NONE
@@ -128,19 +151,52 @@ class ComPortApp(QMainWindow):
 
             self.serial.open()
 
+            # Фиксируем выбор порта
             self.port_combo.setEnabled(False)
-            self.baudrate_combo.setEnabled(False)
 
             self.reader_thread = SerialReaderThread(self.serial)
             self.reader_thread.data_received.connect(self.receive_data)
             self.reader_thread.error_occurred.connect(self.show_error)
             self.reader_thread.start()
 
-            self.update_status(f"Открыт {port_name}, {baudrate} бод")
+            self.status_label.setText(f"Передано символов: {self.tx_count}")
         except Exception as e:
-            self.show_error(f"Не удалось открыть порт: {e}")
+            self.show_error(f"Не удалось открыть порт {port_name}: {e}")
+            self.port_combo.setCurrentIndex(0)
+            if self.serial.is_open:
+                self.serial.close()
 
-    def close_port(self):
+    def update_baudrate(self):
+        if not self.serial.is_open:
+            return
+        try:
+            new_baudrate = self.get_current_baudrate()
+            self.serial.baudrate = new_baudrate
+            self.status_label.setText(f"Передано символов: {self.tx_count}")
+        except Exception:
+            self.show_error("Не удалось изменить скорость передачи.")
+
+    def send_data(self, char):
+        if not self.serial.is_open:
+            self.show_error("Сначала выберите и откройте рабочий COM-порт!")
+            return
+
+        try:
+            # Передача "как есть" в чистом виде
+            self.serial.write(char.encode('utf-8'))
+            self.tx_count += 1
+            self.status_label.setText(f"Передано символов: {self.tx_count}")
+        except Exception:
+            self.show_error("Ошибка при отправке. Проверьте соединение.")
+
+    def receive_data(self, text):
+        self.output_field.insertPlainText(text)
+        self.output_field.ensureCursorVisible()
+
+    def show_error(self, error_msg):
+        QMessageBox.critical(self, "Внимание", error_msg)
+
+    def closeEvent(self, event):
         if self.reader_thread:
             self.reader_thread.stop()
             self.reader_thread = None
@@ -148,31 +204,6 @@ class ComPortApp(QMainWindow):
         if self.serial.is_open:
             self.serial.close()
 
-        self.update_status("Порт закрыт")
-
-    def send_data(self, char):
-        if not self.serial.is_open:
-            return
-
-        try:
-            self.serial.write(char.encode('utf-8'))
-            self.tx_count += 1
-            self.update_status("Символ отправлен")
-        except Exception as e:
-            self.show_error(f"Ошибка отправки: {e}")
-
-    def receive_data(self, text):
-        self.output_field.insertPlainText(text)
-        self.output_field.ensureCursorVisible()
-
-    def update_status(self, msg):
-        self.status_label.setText(f"Статус: {msg} | Отправлено символов: {self.tx_count}")
-
-    def show_error(self, error_msg):
-        QMessageBox.critical(self, "Ошибка", error_msg)
-
-    def closeEvent(self, event):
-        self.close_port()
         event.accept()
 
 

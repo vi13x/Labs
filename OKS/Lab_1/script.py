@@ -22,8 +22,6 @@ class SerialReaderThread(QThread):
                 try:
                     if self.serial_port.in_waiting > 0:
                         raw_data = self.serial_port.read(self.serial_port.in_waiting)
-                        # При разных скоростях биты смещаются, и символы превращаются
-                        # в характерные "битые" знаки замены (\ufffd / ), как и требуется
                         text_data = raw_data.decode('utf-8', errors='replace')
                         if text_data:
                             self.data_received.emit(text_data)
@@ -41,12 +39,41 @@ class SerialReaderThread(QThread):
 class CharLineEdit(QLineEdit):
     char_pressed = pyqtSignal(str)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.cursorPositionChanged.connect(self._lock_cursor_to_end)
+
+    def _lock_cursor_to_end(self):
+        end_pos = len(self.text())
+        if self.cursorPosition() != end_pos:
+            self.setCursorPosition(end_pos)
+
+    def mousePressEvent(self, event):
+        super().mousePressEvent(event)
+        self.end(False)
+
+    def mouseDoubleClickEvent(self, event):
+        self.end(False)
+
     def keyPressEvent(self, event):
+        forbidden_keys = (
+            Qt.Key.Key_Left,
+            Qt.Key.Key_Up,
+            Qt.Key.Key_Home,
+            Qt.Key.Key_PageUp
+        )
+        if event.key() in forbidden_keys:
+            self.end(False)
+            event.accept()
+            return
+
         if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             self.char_pressed.emit('\n')
         elif event.text():
             self.char_pressed.emit(event.text())
+
         super().keyPressEvent(event)
+        self.end(False)
 
 
 class ComPortApp(QMainWindow):
@@ -58,7 +85,7 @@ class ComPortApp(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.setWindowTitle("COM-порт Мессенджер")
+        self.setWindowTitle("COM-порт Мессенджер_2")
         self.resize(560, 480)
         self.setStyleSheet("QWidget { font-size: 14px; }")
 
@@ -66,11 +93,9 @@ class ComPortApp(QMainWindow):
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
 
-        # Окно управления
         control_group = QGroupBox("Окно управления")
         ctrl_layout = QHBoxLayout()
 
-        # Выпадающий список портов: только выбор из доступных, без ручного ввода
         self.port_combo = QComboBox()
         self.port_combo.setEditable(False)
         self.update_ports()
@@ -91,19 +116,16 @@ class ComPortApp(QMainWindow):
         control_group.setLayout(ctrl_layout)
         layout.addWidget(control_group)
 
-        # Поле мгновенного ввода
         layout.addWidget(QLabel("Строка ввода (посимвольная передача):"))
         self.input_field = CharLineEdit()
         self.input_field.char_pressed.connect(self.send_data)
         layout.addWidget(self.input_field)
 
-        # Окно вывода принятых сообщений
         layout.addWidget(QLabel("Окно вывода (принятые сообщения):"))
         self.output_field = QTextEdit()
         self.output_field.setReadOnly(True)
         layout.addWidget(self.output_field)
 
-        # Статус
         status_group = QGroupBox("Окно статуса")
         status_layout = QVBoxLayout()
         self.status_label = QLabel("Передано символов: 0")
@@ -115,7 +137,6 @@ class ComPortApp(QMainWindow):
     def update_ports(self):
         self.port_combo.clear()
         self.port_combo.addItem("")
-        # Сканируем только реально присутствующие в ОС порты
         ports = [p.device for p in serial.tools.list_ports.comports()]
         if ports:
             self.port_combo.addItems(sorted(ports))
@@ -135,7 +156,6 @@ class ComPortApp(QMainWindow):
         baudrate = self.get_current_baudrate()
 
         try:
-            # Если был открыт другой порт — закрываем
             if self.serial.is_open:
                 if self.reader_thread:
                     self.reader_thread.stop()
@@ -150,8 +170,6 @@ class ComPortApp(QMainWindow):
             self.serial.timeout = 0.1
 
             self.serial.open()
-
-            # Фиксируем выбор порта
             self.port_combo.setEnabled(False)
 
             self.reader_thread = SerialReaderThread(self.serial)
@@ -182,7 +200,6 @@ class ComPortApp(QMainWindow):
             return
 
         try:
-            # Передача "как есть" в чистом виде
             self.serial.write(char.encode('utf-8'))
             self.tx_count += 1
             self.status_label.setText(f"Передано символов: {self.tx_count}")

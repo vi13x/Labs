@@ -152,19 +152,19 @@ def correct_single_bit_error(data: bytes, fcs_value: int):
     if position is None:
         return data, fcs_value, None, False
 
-    data_bits = list(bytes_to_bits(data))
-    fcs_bits = list(f'{fcs_value:010b}')
+    data_bit_count = len(data) * 8
     corrected_data = data
     corrected_fcs = fcs_value
 
-    if position < len(data_bits):
-        data_bits[position] = '1' if data_bits[position] == '0' else '0'
-        corrected_data = bits_to_bytes(''.join(data_bits))
+    if position < data_bit_count:
+        byte_index, bit_index = divmod(position, 8)
+        data_bytes = bytearray(data)
+        data_bytes[byte_index] ^= 1 << (7 - bit_index)
+        corrected_data = bytes(data_bytes)
         correction = ('data', position)
     else:
-        fcs_position = position - len(data_bits)
-        fcs_bits[fcs_position] = '1' if fcs_bits[fcs_position] == '0' else '0'
-        corrected_fcs = int(''.join(fcs_bits), 2)
+        fcs_position = position - data_bit_count
+        corrected_fcs ^= 1 << (FCS_BITS - 1 - fcs_position)
         correction = ('fcs', fcs_position)
 
     # Проверяем исправленное слово повторным делением.
@@ -638,7 +638,7 @@ class ComPortApp(QMainWindow):
             candidates = safe_data_error_positions(stuffed_bits, logical_to_raw)
             _, error_raw_position = random.choice(candidates)
             raw = list(stuffed_bits)
-            raw[error_raw_position] = '1' if raw[error_raw_position] == '0' else '0'
+            raw[error_raw_position] = str(int(raw[error_raw_position]) ^ 1)
             errored_bits = ''.join(raw)
 
         self.tx_frame_chars = chars_in_frame

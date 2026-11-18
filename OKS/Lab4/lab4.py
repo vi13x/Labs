@@ -64,7 +64,6 @@ FCS_OFFSET = DATA_END
 RESERVED_OFFSET = FCS_OFFSET + FCS_SIZE
 
 GENERATOR_POLY = 0b10000001001
-GENERATOR_DEGREE = 10
 CODEWORD_BITS = MAX_DATA_SIZE * 8 + FCS_BITS
 
 
@@ -283,10 +282,6 @@ def safe_data_error_positions(stuffed_bits: str, logical_to_raw):
 # DISPLAY HELPERS
 # ============================================================
 
-def format_field_bits(data: bytes) -> str:
-    return ','.join(f'{byte:08b}' for byte in data)
-
-
 def bits_html(bits: str, underlined_positions=None, group_bytes=True) -> str:
     underlined_positions = set(underlined_positions or [])
     tokens = []
@@ -469,13 +464,15 @@ class ComPortApp(QMainWindow):
 
         layout.addWidget(QLabel("Окно ввода:"))
         self.input_field = CharTextEdit()
-        self.input_field.setMinimumHeight(100)
+        # ЛР4, п. 5: размеры ввода и вывода не зависят от других окон.
+        self.input_field.setFixedHeight(100)
         self.input_field.char_pressed.connect(self.send_data)
         layout.addWidget(self.input_field)
 
         layout.addWidget(QLabel("Окно вывода:"))
         self.output_field = QTextEdit()
         self.output_field.setReadOnly(True)
+        self.output_field.setFixedHeight(100)
         layout.addWidget(self.output_field)
 
         status_group = QGroupBox("Окно статуса")

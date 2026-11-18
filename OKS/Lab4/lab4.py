@@ -396,6 +396,7 @@ class ComPortApp(QMainWindow):
         self.tx_wire = b''
         self.tx_byte_index = 0
         self.tx_byte_attempts = 0
+        self.tx_phase = 'listen'
         self.tx_frame_chars = 0
         self.tx_collisions = 0
         self.tx_frame_html = ''
@@ -649,7 +650,8 @@ class ComPortApp(QMainWindow):
         if self.csma_checkbox.isChecked():
             self.tx_wire = wire_bytes
             self.tx_byte_index = 0
-            self.tx_byte_attempts = 0
+            self.reset_byte_attempts()
+            self.tx_phase = 'listen'
             self.tx_timer.start(0)
         else:
             self.write_bytes(wire_bytes)
@@ -664,41 +666,121 @@ class ComPortApp(QMainWindow):
         return ceil(1000 * UART_BITS_PER_BYTE * byte_count / self.serial.baudrate)
 
     def transmit_csma_byte(self):
-        if self.tx_byte_index == len(self.tx_wire):
+        """Основной алгоритм варианта 1: порядок действий и вызовы подпрограмм.
+
+        Одна попытка относится к одному байту, а не ко всему кадру.
+        QTimer продолжает этот же алгоритм после ожидания, без параллельных
+        попыток. Пакетный режим и поздняя коллизия в варианте 1 отсутствуют.
+        """
+        # Завершение обработки последнего байта кадра.
+        if self.is_frame_transmission_finished():
             self.finish_frame()
             return
-        if self.tx_byte_attempts == MAX_BYTE_ATTEMPTS:
-            self.finish_frame(f'Не удалось передать кадр за {MAX_BYTE_ATTEMPTS} попыток на байт.')
+
+        if self.tx_phase == 'listen':
+            # 1. Счётчик обнулён перед первым байтом и после успеха предыдущего.
+            # 2. Прослушиваем канал. Занятость не увеличивает счётчик попыток.
+            if self.is_channel_busy():
+                self.wait_for_channel()
+                return
+
+            # 3. Начинаем эмуляцию передачи байта и ожидаем её завершения.
+            self.start_byte_transmission()
             return
 
-        # Слот длиннее jam на один байт, минимум 10 мс для таймера Qt.
-        slot_ms = max(MIN_SLOT_MS, self.wire_time_ms(len(JAM_SIGNAL) + 1))
-        if random.random() < CHANNEL_BUSY_PROBABILITY:
-            self.tx_timer.start(slot_ms)
+        if self.tx_phase == 'detect':
+            # 4. После попытки передачи проверяем наличие коллизии.
+            if not self.is_collision_detected():
+                self.complete_byte_transmission()
+                return
+
+            # 5. При коллизии передаём Jam и ожидаем его передачи.
+            self.send_jam_signal()
             return
 
-        if random.random() < BYTE_COLLISION_PROBABILITY:
-            # Jam занимает место неудавшейся попытки. Индекс байта остаётся
-            # прежним, чтобы после задержки заново попытаться передать его.
-            self.write_bytes(JAM_SIGNAL)
-            self.tx_byte_attempts += 1
-            self.tx_collisions += 1
-            self.refresh_frame_state()
+        if self.tx_phase == 'jam':
+            # 6. После Jam увеличиваем счётчик неудачных попыток этого байта.
+            self.increment_byte_attempts()
 
-            delay_ms = self.wire_time_ms(len(JAM_SIGNAL))
-            if self.tx_byte_attempts < MAX_BYTE_ATTEMPTS:
-                # IEEE 802.3: задержка r * slot, где 0 <= r < 2**min(n, 10).
-                k = min(self.tx_byte_attempts, BACKOFF_EXPONENT_LIMIT)
-                delay_ms += random.randrange(2 ** k) * slot_ms
-            self.tx_timer.start(delay_ms)
-            return
+            # 7. После 16 неудачных попыток завершаем передачу с ошибкой.
+            if self.is_byte_attempt_limit_reached():
+                self.finish_frame(
+                    f'Не удалось передать кадр: {MAX_BYTE_ATTEMPTS} '
+                    'коллизий при передаче одного байта.'
+                )
+                return
 
-        self.write_bytes(self.tx_wire[self.tx_byte_index:self.tx_byte_index + 1])
-        self.tx_byte_index += 1
+            # 8. Разыгрываем задержку. После неё снова прослушиваем канал.
+            self.wait_random_backoff()
+
+    def is_frame_transmission_finished(self) -> bool:
+        return self.tx_byte_index == len(self.tx_wire)
+
+    def reset_byte_attempts(self):
         self.tx_byte_attempts = 0
+
+    def is_byte_attempt_limit_reached(self) -> bool:
+        return self.tx_byte_attempts >= MAX_BYTE_ATTEMPTS
+
+    def calculate_slot_time(self) -> int:
+        # Слот длиннее передачи Jam на время одного байта; минимум 10 мс
+        # нужен для таймера Qt. Это масштаб эмуляции поверх COM, не Ethernet.
+        return max(MIN_SLOT_MS, self.wire_time_ms(len(JAM_SIGNAL) + 1))
+
+    def is_channel_busy(self) -> bool:
+        # Вариант 1: при каждом прослушивании канал занят с вероятностью 10%.
+        return random.random() < CHANNEL_BUSY_PROBABILITY
+
+    def wait_for_channel(self):
+        self.tx_timer.start(self.calculate_slot_time())
+
+    def start_byte_transmission(self):
+        # Эмулируем попытку длительностью в один байт 8N1.
+        # Условно столкнувшийся байт не доставляем через реальный COM:
+        # успешный байт будет записан в complete_byte_transmission(),
+        # а коллизия будет передана приёмнику настоящим Jam-сигналом.
+        # Поэтому повторные попытки не создают дубликатов в принятом кадре.
+        self.tx_phase = 'detect'
+        self.tx_timer.start(self.wire_time_ms(1))
+
+    def is_collision_detected(self) -> bool:
+        # Вариант 1: коллизия отдельного байта с вероятностью 40%.
+        return random.random() < BYTE_COLLISION_PROBABILITY
+
+    def send_jam_signal(self):
+        self.write_bytes(JAM_SIGNAL)
+        self.tx_collisions += 1
+        self.refresh_frame_state()
+        self.tx_phase = 'jam'
+        self.tx_timer.start(self.wire_time_ms(len(JAM_SIGNAL)))
+
+    def increment_byte_attempts(self):
+        self.tx_byte_attempts += 1
+
+    def calculate_backoff_delay(self, slot_ms: int) -> int:
+        # Стандартный усечённый двоичный экспоненциальный backoff:
+        # delay = r * slot, r из [0, 2**k - 1], k = min(n, 10).
+        # n — число коллизий текущего байта, предел — 16 попыток.
+        k = min(self.tx_byte_attempts, BACKOFF_EXPONENT_LIMIT)
+        return random.randrange(2 ** k) * slot_ms
+
+    def wait_random_backoff(self):
+        delay_ms = self.calculate_backoff_delay(self.calculate_slot_time())
+        self.tx_phase = 'listen'
+        self.tx_timer.start(delay_ms)
+
+    def complete_byte_transmission(self):
+        # Доставляем успешно переданный в модели байт через COM ровно один раз.
+        current_byte = self.tx_wire[self.tx_byte_index:self.tx_byte_index + 1]
+        self.write_bytes(current_byte)
+        self.tx_byte_index += 1
+        self.reset_byte_attempts()
+        self.tx_phase = 'listen'
         self.tx_timer.start(self.wire_time_ms(1))
 
     def finish_frame(self, error=None):
+        self.tx_timer.stop()
+        self.tx_phase = 'listen'
         self.tx_wire = b''
         if error is None:
             self.tx_count += self.tx_frame_chars
@@ -928,10 +1010,6 @@ class ComPortApp(QMainWindow):
             except Exception as exc:
                 self.output_field.append(f'[Ошибка приёма кадра] {exc}')
 
-    # ========================================================
-    # ERRORS AND APPLICATION CLOSING
-    # ========================================================
-
     def show_error(self, message: str):
         QMessageBox.warning(self, 'Ошибка', message)
 
@@ -946,11 +1024,6 @@ class ComPortApp(QMainWindow):
         except Exception:
             pass
         event.accept()
-
-
-# ============================================================
-# MAIN
-# ============================================================
 
 def main():
     app = QApplication(sys.argv)

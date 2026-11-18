@@ -1,3 +1,11 @@
+# ЛР4, вариант 1. Зоны ответственности по разделам README.md:
+# 1. Настя — основной алгоритм CSMA/CD и его подключение к передаче.
+# 2. Саша Баяк — прослушивание канала, вероятность занятости 10%.
+# 3. Саша Зелень — обнаружение коллизий 40% и передача Jam-сигнала.
+# 4. Дима Лечезарный — случайная задержка и приём кадров с учётом Jam.
+# 5. Влад — переключатель CSMA/CD и вывод звёздочек коллизий.
+# Подписи обозначают зоны работы в ЛР4; исходная база ЛР3 сохранена.
+
 import sys
 import random
 import codecs
@@ -17,7 +25,7 @@ from PyQt6.QtGui import QTextCursor
 
 
 # ============================================================
-# PARAMETERS OF FRAME (AS IN LABORATORY WORK 3)
+# ПАРАМЕТРЫ КАДРА — СОХРАНЕНЫ ИЗ ЛР3
 # ============================================================
 
 FRAME_FLAG = b"450502-1"
@@ -50,11 +58,11 @@ MIN_SLOT_MS = 10
 UART_BITS_PER_BYTE = 10  # 8N1: стартовый бит, 8 бит данных, стоповый бит.
 
 # Стаффинг исключает флаг из тела кадра. За настоящим флагом следует
-# нулевой тип кадра, поэтому флаг с 0xff однозначно обозначает jam.
+# нулевой тип кадра, поэтому флаг с 0xff однозначно обозначает Jam-сигнал.
 JAM_SIGNAL = FRAME_FLAG + b'\xff'
 
-# Field order in the transmitted body (on the wire):
-# type, number, checksum, data, FCS, reserved.
+# Порядок полей в передаваемом теле кадра (как в ЛР3):
+# тип, номер, контрольная сумма, данные, FCS, резерв.
 TYPE_OFFSET = 0
 NUMBER_OFFSET = 1
 CHECKSUM_OFFSET = 2
@@ -86,7 +94,7 @@ def bits_to_bytes(bits: str) -> bytes:
 
 
 # ============================================================
-# CYCLIC ERROR-CORRECTING CODE
+# ЦИКЛИЧЕСКИЙ КОД И ИСПРАВЛЕНИЕ ОШИБОК — БАЗА ЛР3
 # ============================================================
 
 def polynomial_remainder(value: int, divisor: int) -> int:
@@ -151,19 +159,19 @@ def correct_single_bit_error(data: bytes, fcs_value: int):
     if position is None:
         return data, fcs_value, None, False
 
-    data_bit_count = len(data) * 8
+    data_bits = list(bytes_to_bits(data))
+    fcs_bits = list(f'{fcs_value:010b}')
     corrected_data = data
     corrected_fcs = fcs_value
 
-    if position < data_bit_count:
-        byte_index, bit_index = divmod(position, 8)
-        data_bytes = bytearray(data)
-        data_bytes[byte_index] ^= 1 << (7 - bit_index)
-        corrected_data = bytes(data_bytes)
+    if position < len(data_bits):
+        data_bits[position] = '1' if data_bits[position] == '0' else '0'
+        corrected_data = bits_to_bytes(''.join(data_bits))
         correction = ('data', position)
     else:
-        fcs_position = position - data_bit_count
-        corrected_fcs ^= 1 << (FCS_BITS - 1 - fcs_position)
+        fcs_position = position - len(data_bits)
+        fcs_bits[fcs_position] = '1' if fcs_bits[fcs_position] == '0' else '0'
+        corrected_fcs = int(''.join(fcs_bits), 2)
         correction = ('fcs', fcs_position)
 
     # Проверяем исправленное слово повторным делением.
@@ -174,7 +182,7 @@ def correct_single_bit_error(data: bytes, fcs_value: int):
 
 
 # ============================================================
-# FRAME
+# ФОРМИРОВАНИЕ КАДРА — БАЗА ЛР3
 # ============================================================
 
 class Frame:
@@ -208,7 +216,7 @@ class Frame:
 
 
 # ============================================================
-# BIT STUFFING AND DESTUFFING
+# БИТОВЫЙ СТАФФИНГ И СНЯТИЕ СТАФФИНГА — БАЗА ЛР3
 # ============================================================
 
 def bit_stuff_with_map(bits: str):
@@ -279,7 +287,7 @@ def safe_data_error_positions(stuffed_bits: str, logical_to_raw):
 
 
 # ============================================================
-# DISPLAY HELPERS
+# ВСПОМОГАТЕЛЬНОЕ ФОРМАТИРОВАНИЕ — БАЗА ЛР3
 # ============================================================
 
 def bits_html(bits: str, underlined_positions=None, group_bytes=True) -> str:
@@ -297,7 +305,7 @@ def bits_html(bits: str, underlined_positions=None, group_bytes=True) -> str:
 
 
 # ============================================================
-# SERIAL PORT READER THREAD
+# ПОТОК ЧТЕНИЯ COM-ПОРТА — БАЗА ЛР3
 # ============================================================
 
 class SerialReaderThread(QThread):
@@ -330,7 +338,7 @@ class SerialReaderThread(QThread):
 
 
 # ============================================================
-# INPUT TEXT FIELD
+# ПОЛЕ ВВОДА ТЕКСТА — БАЗА ЛР3
 # ============================================================
 
 class CharTextEdit(QTextEdit):
@@ -376,7 +384,7 @@ class CharTextEdit(QTextEdit):
 
 
 # ============================================================
-# MAIN APPLICATION
+# ОСНОВНОЕ ПРИЛОЖЕНИЕ
 # ============================================================
 
 class ComPortApp(QMainWindow):
@@ -385,6 +393,7 @@ class ComPortApp(QMainWindow):
         self.serial = serial.Serial()
         self.reader_thread = None
 
+        # Настя (раздел 1 README): очередь кадров и состояние передачи.
         self.tx_buffer = bytearray()
         self.tx_count = 0
         self.tx_queue = deque()
@@ -396,12 +405,13 @@ class ComPortApp(QMainWindow):
         self.tx_collisions = 0
         self.tx_frame_html = ''
         # Одна последовательность попыток в основном цикле Qt. Таймер
-        # освобождает интерфейс на время прослушивания и backoff.
+        # освобождает интерфейс на время прослушивания и случайной задержки.
         self.tx_timer = QTimer(self)
         self.tx_timer.setSingleShot(True)
         self.tx_timer.setTimerType(Qt.TimerType.PreciseTimer)
         self.tx_timer.timeout.connect(self.transmit_next)
 
+        # Дима Лечезарный (раздел 4 README): сборка кадра и распознавание Jam.
         self.rx_buffer = bytearray()
         self.receiving_frame = False
         self.rx_wire = bytearray()
@@ -410,6 +420,7 @@ class ComPortApp(QMainWindow):
         self.rx_decoder = codecs.getincrementaldecoder('utf-8')(errors='replace')
         self.init_ui()
 
+    # Зона ответственности: Влад (раздел 5 README) — дополнения интерфейса ЛР4.
     def init_ui(self):
         self.setWindowTitle("COM-порт Мессенджер_1")
         self.resize(560, 480)
@@ -444,6 +455,7 @@ class ComPortApp(QMainWindow):
         self.error_checkbox.setChecked(False)
         ctrl_layout.addWidget(self.error_checkbox)
 
+        # Влад (раздел 5 README): единственный новый переключатель ЛР4.
         self.csma_checkbox = QCheckBox("CSMA/CD")
         self.csma_checkbox.setToolTip("Эмуляция доступа к моноканалу")
         self.csma_checkbox.setAutoFillBackground(True)
@@ -464,15 +476,14 @@ class ComPortApp(QMainWindow):
 
         layout.addWidget(QLabel("Окно ввода:"))
         self.input_field = CharTextEdit()
-        # ЛР4, п. 5: размеры ввода и вывода не зависят от других окон.
-        self.input_field.setFixedHeight(100)
+        # Минимальная высота и компоновка сохранены из ЛР3.
+        self.input_field.setMinimumHeight(100)
         self.input_field.char_pressed.connect(self.send_data)
         layout.addWidget(self.input_field)
 
         layout.addWidget(QLabel("Окно вывода:"))
         self.output_field = QTextEdit()
         self.output_field.setReadOnly(True)
-        self.output_field.setFixedHeight(100)
         layout.addWidget(self.output_field)
 
         status_group = QGroupBox("Окно статуса")
@@ -496,26 +507,14 @@ class ComPortApp(QMainWindow):
         )
 
     # ========================================================
-    # PORT MANAGEMENT
+    # УПРАВЛЕНИЕ COM-ПОРТОМ
     # ========================================================
 
     def update_ports(self):
         self.port_combo.clear()
         self.port_combo.addItem('')
-        ports = {port.device for port in serial.tools.list_ports.comports()}
-        if sys.platform == 'win32':
-            # Драйверы виртуальных портов могут регистрировать имена только здесь.
-            import winreg
-
-            try:
-                with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'HARDWARE\DEVICEMAP\SERIALCOMM') as key:
-                    for index in range(winreg.QueryInfoKey(key)[1]):
-                        _, name, kind = winreg.EnumValue(key, index)
-                        if kind == winreg.REG_SZ and name:
-                            ports.add(name)
-            except OSError:
-                pass
-        self.port_combo.addItems(sorted(ports))
+        ports = sorted(port.device for port in serial.tools.list_ports.comports())
+        self.port_combo.addItems(ports)
         self.port_combo.setCurrentIndex(0)
 
     def get_baudrate(self):
@@ -591,9 +590,10 @@ class ComPortApp(QMainWindow):
             self.show_error(f'Не удалось изменить скорость: {exc}')
 
     # ========================================================
-    # DATA TRANSMISSION
+    # ПЕРЕДАЧА ДАННЫХ
     # ========================================================
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def send_data(self, char: str):
         if not self.serial.is_open:
             self.show_error('Сначала выберите COM-порт.')
@@ -613,6 +613,7 @@ class ComPortApp(QMainWindow):
         if self.tx_queue and not self.tx_wire and not self.tx_timer.isActive():
             self.tx_timer.start(0)
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def transmit_next(self):
         if not self.serial.is_open:
             return
@@ -624,6 +625,7 @@ class ComPortApp(QMainWindow):
         except Exception as exc:
             self.finish_frame(f'Ошибка передачи кадра: {exc}')
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def start_frame(self, data: bytes, chars_in_frame: int):
         frame = Frame(data)
         body_bits = bytes_to_bits(frame.body_bytes())
@@ -662,6 +664,7 @@ class ComPortApp(QMainWindow):
     def wire_time_ms(self, byte_count: int) -> int:
         return ceil(1000 * UART_BITS_PER_BYTE * byte_count / self.serial.baudrate)
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def transmit_csma_byte(self):
         """Основной алгоритм варианта 1: порядок действий и вызовы подпрограмм.
 
@@ -676,7 +679,7 @@ class ComPortApp(QMainWindow):
 
         if self.tx_phase == 'listen':
             # 1. Счётчик обнулён перед первым байтом и после успеха предыдущего.
-            # 2. Прослушиваем канал. Занятость не увеличивает счётчик попыток.
+            # 2. Саша Баяк: прослушиваем канал. Занятость не увеличивает счётчик попыток.
             if self.is_channel_busy():
                 self.wait_for_channel()
                 return
@@ -686,12 +689,12 @@ class ComPortApp(QMainWindow):
             return
 
         if self.tx_phase == 'detect':
-            # 4. После попытки передачи проверяем наличие коллизии.
+            # 4. Саша Зелень: после попытки проверяем наличие коллизии.
             if not self.is_collision_detected():
                 self.complete_byte_transmission()
                 return
 
-            # 5. При коллизии передаём Jam и ожидаем его передачи.
+            # 5. Саша Зелень: передаём Jam и ожидаем его передачи.
             self.send_jam_signal()
             return
 
@@ -707,30 +710,38 @@ class ComPortApp(QMainWindow):
                 )
                 return
 
-            # 8. Разыгрываем задержку. После неё снова прослушиваем канал.
+            # 8. Дима Лечезарный: разыгрываем и выдерживаем задержку.
+            # После неё возвращаемся к прослушиванию канала.
             self.wait_random_backoff()
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def is_frame_transmission_finished(self) -> bool:
         return self.tx_byte_index == len(self.tx_wire)
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def reset_byte_attempts(self):
         self.tx_byte_attempts = 0
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def is_byte_attempt_limit_reached(self) -> bool:
         return self.tx_byte_attempts >= MAX_BYTE_ATTEMPTS
 
+    # Зона ответственности: Саша Баяк (раздел 2 README) — прослушивание канала.
     def calculate_slot_time(self) -> int:
         # Слот длиннее передачи Jam на время одного байта; минимум 10 мс
         # нужен для таймера Qt. Это масштаб эмуляции поверх COM, не Ethernet.
         return max(MIN_SLOT_MS, self.wire_time_ms(len(JAM_SIGNAL) + 1))
 
+    # Зона ответственности: Саша Баяк (раздел 2 README) — прослушивание канала.
     def is_channel_busy(self) -> bool:
         # Вариант 1: при каждом прослушивании канал занят с вероятностью 10%.
         return random.random() < CHANNEL_BUSY_PROBABILITY
 
+    # Зона ответственности: Саша Баяк (раздел 2 README) — прослушивание канала.
     def wait_for_channel(self):
         self.tx_timer.start(self.calculate_slot_time())
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def start_byte_transmission(self):
         # Эмулируем попытку длительностью в один байт 8N1.
         # Условно столкнувшийся байт не доставляем через реальный COM:
@@ -740,32 +751,39 @@ class ComPortApp(QMainWindow):
         self.tx_phase = 'detect'
         self.tx_timer.start(self.wire_time_ms(1))
 
+    # Зона ответственности: Саша Зелень (раздел 3 README) — обнаружение коллизии и Jam.
     def is_collision_detected(self) -> bool:
         # Вариант 1: коллизия отдельного байта с вероятностью 40%.
         return random.random() < BYTE_COLLISION_PROBABILITY
 
+    # Зона ответственности: Саша Зелень (раздел 3 README) — обнаружение коллизии и Jam.
     def send_jam_signal(self):
         self.write_bytes(JAM_SIGNAL)
         self.tx_collisions += 1
+        # Вызываем обновление статуса из зоны ответственности Влада.
         self.refresh_frame_state()
         self.tx_phase = 'jam'
         self.tx_timer.start(self.wire_time_ms(len(JAM_SIGNAL)))
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def increment_byte_attempts(self):
         self.tx_byte_attempts += 1
 
+    # Зона ответственности: Дима Лечезарный (раздел 4 README) — случайная задержка и приём.
     def calculate_backoff_delay(self, slot_ms: int) -> int:
-        # Стандартный усечённый двоичный экспоненциальный backoff:
+        # Стандартная усечённая двоичная экспоненциальная задержка:
         # delay = r * slot, r из [0, 2**k - 1], k = min(n, 10).
         # n — число коллизий текущего байта, предел — 16 попыток.
         k = min(self.tx_byte_attempts, BACKOFF_EXPONENT_LIMIT)
         return random.randrange(2 ** k) * slot_ms
 
+    # Зона ответственности: Дима Лечезарный (раздел 4 README) — случайная задержка и приём.
     def wait_random_backoff(self):
         delay_ms = self.calculate_backoff_delay(self.calculate_slot_time())
         self.tx_phase = 'listen'
         self.tx_timer.start(delay_ms)
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def complete_byte_transmission(self):
         # Доставляем успешно переданный в модели байт через COM ровно один раз.
         current_byte = self.tx_wire[self.tx_byte_index:self.tx_byte_index + 1]
@@ -775,6 +793,7 @@ class ComPortApp(QMainWindow):
         self.tx_phase = 'listen'
         self.tx_timer.start(self.wire_time_ms(1))
 
+    # Зона ответственности: Настя (раздел 1 README) — подключение и последовательность алгоритма.
     def finish_frame(self, error=None):
         self.tx_timer.stop()
         self.tx_phase = 'listen'
@@ -789,7 +808,7 @@ class ComPortApp(QMainWindow):
             self.tx_timer.start(0)
 
     # ========================================================
-    # FRAME DISPLAY
+    # ОТОБРАЖЕНИЕ КАДРА
     # Порядок отображения: Флаг, Тип_кадра, Номер_кадра,
     # Данные (4-е), Контрольная_сумма, FCS.
     # Подчёркивание как в lab3.py:
@@ -797,6 +816,7 @@ class ComPortApp(QMainWindow):
     #   строка 3 — только инвертированный бит ошибки.
     # ========================================================
 
+    # Зона ответственности: Влад (раздел 5 README) — дополнения интерфейса ЛР4.
     def show_last_frame(
         self,
         frame,
@@ -899,6 +919,7 @@ class ComPortApp(QMainWindow):
         )
         self.refresh_frame_state()
 
+    # Зона ответственности: Влад (раздел 5 README) — дополнения интерфейса ЛР4.
     def refresh_frame_state(self):
         collision_line = ''
         if self.tx_collisions:
@@ -909,7 +930,7 @@ class ComPortApp(QMainWindow):
         )
 
     # ========================================================
-    # DATA RECEPTION
+    # ПРИЁМ ДАННЫХ
     # ========================================================
 
     def _append_question_marks(self, count: int):
@@ -919,6 +940,7 @@ class ComPortApp(QMainWindow):
         self.output_field.insertPlainText('?' * count)
         self.output_field.ensureCursorVisible()
 
+    # Зона ответственности: Дима Лечезарный (раздел 4 README) — случайная задержка и приём.
     def receive_data(self, raw_data: bytes):
         self.rx_wire.extend(raw_data)
         while (jam_pos := self.rx_wire.find(JAM_SIGNAL)) >= 0:
@@ -932,7 +954,7 @@ class ComPortApp(QMainWindow):
                 self.receiving_frame = False
                 self.rx_decoder.reset()
 
-        # Сохраняем только возможное начало jam между чтениями из COM-порта.
+        # Сохраняем только возможное начало Jam-сигнала между чтениями из COM-порта.
         end = len(self.rx_wire)
         for size in range(len(JAM_SIGNAL) - 1, 0, -1):
             if self.rx_wire.endswith(JAM_SIGNAL[:size]):
@@ -941,6 +963,7 @@ class ComPortApp(QMainWindow):
         self.receive_frame_bytes(self.rx_wire[:end])
         del self.rx_wire[:end]
 
+    # Зона ответственности: Дима Лечезарный (раздел 4 README) — случайная задержка и приём.
     def receive_frame_bytes(self, data: bytes):
         if not data:
             return
@@ -960,7 +983,7 @@ class ComPortApp(QMainWindow):
                 del self.rx_buffer[:flag_pos + FLAG_SIZE]
                 self.receiving_frame = True
 
-            # При backoff пауза между байтами не означает обрыв кадра.
+            # При случайной задержке пауза между байтами не означает обрыв кадра.
             # Если кадр действительно оборвался, следующий флаг отделит его.
             next_flag = self.rx_buffer.find(FRAME_FLAG, 0, MAX_STUFFED_BODY_SIZE + FLAG_SIZE)
             end = next_flag if next_flag >= 0 else MAX_STUFFED_BODY_SIZE

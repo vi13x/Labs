@@ -320,16 +320,17 @@ class SerialReaderThread(QThread):
     def run(self):
         while self.running:
             try:
-                if (self.serial_port and self.serial_port.is_open
-                        and self.serial_port.in_waiting):
-                    chunk = self.serial_port.read(self.serial_port.in_waiting)
-                    if chunk:
-                        self.data_received.emit(chunk)
-                else:
+                if not self.serial_port or not self.serial_port.is_open:
                     self.msleep(30)
+                    continue
+                # Ожидаем первый байт не дольше timeout, затем считываем
+                # доступную порцию. Границы чтений не являются границами кадра.
+                chunk = self.serial_port.read(self.serial_port.in_waiting or 1)
+                if chunk:
+                    self.data_received.emit(chunk)
             except Exception as exc:
                 if self.running:
-                    self.error_occurred.emit(f'Read error: {exc}')
+                    self.error_occurred.emit(f'Ошибка чтения COM-порта: {exc}')
                 self.msleep(250)
 
     def stop(self):
@@ -416,6 +417,7 @@ class ComPortApp(QMainWindow):
         self.receiving_frame = False
         self.rx_wire = bytearray()
         self.rx_byte_collisions = 0
+        self.rx_error_reported = False
 
         self.rx_decoder = codecs.getincrementaldecoder('utf-8')(errors='replace')
         self.init_ui()
@@ -534,15 +536,18 @@ class ComPortApp(QMainWindow):
                     self.reader_thread = None
                 self.serial.close()
 
-            # Windows требует путь устройства для имён вроде CNCA0 у com0com.
-            if sys.platform == 'win32' and not port_name.startswith('\\\\.\\'):
-                port_name = '\\\\.\\' + port_name
+            # Имя порта передаём pyserial точно так же, как в рабочей ЛР3.
+            # Для COM10 и выше pyserial сам добавляет системный префикс.
             self.serial.port = port_name
             self.serial.baudrate = self.get_baudrate()
             self.serial.parity = serial.PARITY_NONE
             self.serial.stopbits = serial.STOPBITS_ONE
             self.serial.bytesize = serial.EIGHTBITS
             self.serial.timeout = 0.1
+            # Передаём произвольные байты кадра и Jam без управления потоком.
+            self.serial.xonxoff = False
+            self.serial.rtscts = False
+            self.serial.dsrdtr = False
             self.serial.open()
 
             self.port_combo.setEnabled(False)
@@ -554,6 +559,7 @@ class ComPortApp(QMainWindow):
             self.receiving_frame = False
             self.rx_wire.clear()
             self.rx_byte_collisions = 0
+            self.rx_error_reported = False
             self.rx_decoder.reset()
 
             self.reader_thread = SerialReaderThread(self.serial)
@@ -656,10 +662,19 @@ class ComPortApp(QMainWindow):
             self.write_bytes(wire_bytes)
             self.finish_frame()
 
+    # Зона ответственности: Настя (раздел 1 README) — доставка байтов в COM-порт.
     def write_bytes(self, data: bytes):
-        written = self.serial.write(data)
-        if written != len(data):
-            raise IOError(f'Передано {written} из {len(data)} байт.')
+        # Частичная запись не должна обрывать кадр: дописываем остаток.
+        offset = 0
+        while offset < len(data):
+            written = self.serial.write(data[offset:])
+            if written is None or written <= 0:
+                raise IOError(f'COM-порт не передал оставшиеся {len(data) - offset} байт.')
+            offset += written
+        # На физическом порту запись в драйвер ещё не означает окончание
+        # передачи. Ожидаем опустошения выходной очереди перед следующим
+        # этапом алгоритма или завершением кадра. Это не подтверждение приёма.
+        self.serial.flush()
 
     def wire_time_ms(self, byte_count: int) -> int:
         return ceil(1000 * UART_BITS_PER_BYTE * byte_count / self.serial.baudrate)
@@ -933,12 +948,13 @@ class ComPortApp(QMainWindow):
     # ПРИЁМ ДАННЫХ
     # ========================================================
 
-    def _append_question_marks(self, count: int):
-        if count <= 0:
-            return
-        self.output_field.moveCursor(QTextCursor.MoveOperation.End)
-        self.output_field.insertPlainText('?' * count)
-        self.output_field.ensureCursorVisible()
+    # Зона ответственности: Дима Лечезарный (раздел 4 README) — ошибки приёма.
+    def report_receive_error(self, message: str):
+        # Сообщаем о потере синхронизации один раз до следующего принятого
+        # кадра. Служебные и отброшенные байты не превращаем в символы '?'.
+        if not self.rx_error_reported:
+            self.output_field.append(f'[Ошибка приёма] {message}')
+            self.rx_error_reported = True
 
     # Зона ответственности: Дима Лечезарный (раздел 4 README) — случайная задержка и приём.
     def receive_data(self, raw_data: bytes):
@@ -976,9 +992,11 @@ class ComPortApp(QMainWindow):
                 if flag_pos < 0:
                     keep = max(0, FLAG_SIZE - 1)
                     if len(self.rx_buffer) > keep:
-                        discarded = len(self.rx_buffer) - keep
                         del self.rx_buffer[:-keep]
-                        self._append_question_marks(discarded)
+                        self.report_receive_error(
+                            'Не найден флаг кадра. Проверьте одинаковые версии '
+                            'программы и настройки порта на обоих ПК.'
+                        )
                     return
                 del self.rx_buffer[:flag_pos + FLAG_SIZE]
                 self.receiving_frame = True
@@ -990,11 +1008,13 @@ class ComPortApp(QMainWindow):
             try:
                 logical_bits, raw_consumed_bits = destuff_body(bytes_to_bits(self.rx_buffer[:end]))
                 if logical_bits is None:
-                    if next_flag < 0:
+                    if next_flag < 0 and len(self.rx_buffer) < MAX_STUFFED_BODY_SIZE:
                         return
+                    if next_flag < 0:
+                        raise ValueError('Превышена допустимая длина тела кадра.')
                     raise ValueError('Неполный кадр перед следующим флагом.')
-            except ValueError:
-                self._append_question_marks(8)
+            except ValueError as exc:
+                self.report_receive_error(str(exc))
                 self.receiving_frame = False
                 self.rx_decoder.reset()
                 del self.rx_buffer[:next_flag if next_flag >= 0 else 1]
@@ -1016,10 +1036,11 @@ class ComPortApp(QMainWindow):
                  correction, valid) = correct_single_bit_error(data, fcs_value)
 
                 if not valid:
-                    self._append_question_marks(8)
+                    self.report_receive_error('FCS не позволяет исправить повреждённый кадр.')
                     self.rx_decoder.reset()
                     continue
 
+                self.rx_error_reported = False
                 payload = corrected_data.rstrip(b'\x00')
                 text = self.rx_decoder.decode(payload, final=False)
                 if text:
@@ -1028,7 +1049,8 @@ class ComPortApp(QMainWindow):
                     self.output_field.ensureCursorVisible()
 
             except Exception as exc:
-                self.output_field.append(f'[Ошибка приёма кадра] {exc}')
+                self.report_receive_error(str(exc))
+                self.rx_decoder.reset()
 
     def show_error(self, message: str):
         QMessageBox.warning(self, 'Ошибка', message)
